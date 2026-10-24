@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Idea Catcher · Dan Koe's process</title>
+<meta name="theme-color" content="#0e0f12">
+<meta name="description" content="Capture content ideas and turn them into posts, following Dan Koe's idea museum process.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ideas">
+<style>
+:root{
+  --bg:#0e0f12;--panel:#16181d;--panel2:#1d2027;--line:#2a2e37;--text:#eceef2;--muted:#9aa1ad;
+  --accent:#f5c451;--accent2:#7cc4ff;--good:#6fd39a;--bad:#ff7a7a;--fav:#ff9ec7;--val:#7cc4ff;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent2)}
+header{position:sticky;top:0;z-index:5;background:rgba(14,15,18,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:12px;padding:12px 18px;max-width:1100px;margin:0 auto}
+.logo{font-weight:800;letter-spacing:-.02em;font-size:18px}
+.logo span{color:var(--accent)}
+.top .sp{flex:1}
+nav{display:flex;gap:6px;overflow-x:auto;padding:0 18px 10px;max-width:1100px;margin:0 auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:7px 12px;border-radius:999px;cursor:pointer;font:inherit;font-size:13px;white-space:nowrap}
+nav button b{color:var(--text);font-weight:600;margin-right:4px}
+nav button.on{background:var(--accent);color:#1a1405;border-color:var(--accent)}
+nav button.on b{color:#1a1405}
+main{max-width:1100px;margin:0 auto;padding:22px 18px 80px}
+h1{font-size:26px;letter-spacing:-.02em;margin:0 0 4px}
+h2{font-size:17px;margin:0 0 10px}
+h3{font-size:14px;margin:0 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kicker{color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.lead{color:var(--muted);margin:0 0 18px;max-width:760px}
+.quote{border-left:3px solid var(--accent);padding:8px 14px;margin:0 0 18px;color:#d8dbe2;background:var(--panel);border-radius:0 10px 10px 0;font-style:italic}
+.quote small{display:block;color:var(--muted);font-style:normal;margin-top:4px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}h1{font-size:22px}}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;font:inherit}
+textarea{min-height:80px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:9px 14px;cursor:pointer;font:inherit;font-size:14px}
+.btn:hover{border-color:#444a57}
+.btn.p{background:var(--accent);border-color:var(--accent);color:#1a1405;font-weight:700}
+.btn.s{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg label{margin:0;display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel2);padding:7px 11px;border-radius:999px;cursor:pointer;color:var(--text);font-size:13px}
+.seg input{width:auto;margin:0}
+.pill{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.pill.fav{color:var(--fav);border-color:#5a3346}.pill.val{color:var(--val);border-color:#24435c}.pill.ok{color:var(--good);border-color:#24503a}
+.idea{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.idea p{margin:0 0 8px;white-space:pre-wrap}
+.meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.empty{color:var(--muted);font-size:14px;padding:14px;border:1px dashed var(--line);border-radius:12px;text-align:center}
+.prompt{position:relative;background:#0b0c0f;border:1px solid var(--line);border-radius:12px;padding:14px 14px 14px;white-space:pre-wrap;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#dfe3ea}
+.prompt .btn{position:absolute;top:8px;right:8px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:18px;height:18px;margin-top:2px;flex:0 0 auto}
+.check .auto{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
+.done{color:var(--good)}
+.bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.q{display:grid;grid-template-columns:28px 1fr;gap:10px;margin-bottom:14px}
+.q .n{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#1a1405;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px}
+.q .lab{font-weight:600;margin-bottom:6px}
+.rate{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.rate label{margin:0;display:flex;gap:4px;align-items:center;font-size:12px;color:var(--muted);cursor:pointer}
+.rate input{width:auto}
+.star{cursor:pointer;background:none;border:0;font-size:18px;color:#555;padding:0 4px}
+.star.on{color:var(--accent)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+summary{cursor:pointer;color:var(--muted);font-size:14px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--accent);color:#1a1405;padding:10px 16px;border-radius:10px;font-weight:700;opacity:0;transition:.2s;pointer-events:none;z-index:20}
+.toast.on{opacity:1}
+.next{display:flex;justify-content:space-between;gap:10px;margin-top:22px;flex-wrap:wrap}
+.stat{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.small{font-size:12.5px;color:var(--muted)}
+.warn{color:var(--accent)}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:20px}
+.hl{border-color:var(--accent)!important}
+main{overflow-wrap:anywhere}
+.idea p,.quote,.prompt,h1,h2{overflow-wrap:anywhere}
+:focus-visible{outline:3px solid var(--accent2)!important;outline-offset:2px}
+.star{color:#9aa1ad}
+.pill.cfx{color:#ffb86b;border-color:#6b4a24}
+.banner{background:#2a2111;border:1px solid #6b5420;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px}
+.banner .row{margin-top:8px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.qr{background:#fff;border-radius:12px;padding:6px;width:min(320px,100%);margin:4px 0 12px}
+.qr svg{display:block;width:100%;height:auto}
+.toast.undo{pointer-events:auto;display:flex;gap:12px;align-items:center}
+.toast .btn{padding:6px 12px;background:#1a1405;color:var(--accent);border-color:#1a1405}
+label.check{margin:0;color:var(--text);font-size:15px;cursor:pointer}
+@media (max-width:1024px),(pointer:coarse){
+  .btn,nav button,.seg label,.rate label,label.check,.star{min-height:44px}
+  .btn{min-width:44px}
+  .btn.s{padding:8px 12px}
+  .star{min-width:44px}
+  .rate label{padding:0 6px}
+  input,select{min-height:44px}
+  .check input{width:22px;height:22px}
+}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="logo">Idea <span>Catcher</span></div>
+    <div class="sp"></div>
+    <button class="btn s ghost" id="syncPill" data-act="openSync">Sync</button>
+    <button class="btn s ghost" data-act="export" title="Download all your data as JSON">Export</button>
+    <button class="btn s ghost" data-act="import" title="Load a JSON backup (merges, never deletes)">Import</button><input id="importFile" type="file" accept="application/json,.json" hidden aria-label="Import backup file">
+  </div>
+  <nav id="nav"></nav>
+</header>
+<main id="app"></main>
+<footer>Built on Dan Koe's "The influencer is dead. The Age of Experience is here." · <a href="https://x.com/thedankoe/status/2112586533610156368" target="_blank" rel="noopener">Read the article</a> · Data stays in this browser (localStorage). Export to back up; Import merges a backup in without deleting anything.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* QR Code Generator for JavaScript, qrcode-generator 2.0.4 by Kazuhiko Arase, MIT license. Inlined so it works offline. */
+// Copyright (c) 2009 Kazuhiko Arase
+// Licensed under the MIT license:
+var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],f={},c=function(t,r){o=function(t){for(var r=new Array(t),e=0;e<t;e+=1){r[e]=new Array(t);for(var n=0;n<t;n+=1)r[e][n]=null}return r}(i=4*e+17),l(0,0),l(i-7,0),l(0,i-7),s(),h(),d(t,r),e>=7&&v(t),null==a&&(a=p(e,n,u)),w(a,r)},l=function(t,r){for(var e=-1;e<=7;e+=1)if(!(t+e<=-1||i<=t+e))for(var n=-1;n<=7;n+=1)r+n<=-1||i<=r+n||(o[t+e][r+n]=0<=e&&e<=6&&(0==n||6==n)||0<=n&&n<=6&&(0==e||6==e)||2<=e&&e<=4&&2<=n&&n<=4)},h=function(){for(var t=8;t<i-8;t+=1)null==o[t][6]&&(o[t][6]=t%2==0);for(var r=8;r<i-8;r+=1)null==o[6][r]&&(o[6][r]=r%2==0)},s=function(){for(var t=B.getPatternPosition(e),r=0;r<t.length;r+=1)for(var n=0;n<t.length;n+=1){var i=t[r],a=t[n];if(null==o[i][a])for(var u=-2;u<=2;u+=1)for(var f=-2;f<=2;f+=1)o[i+u][a+f]=-2==u||2==u||-2==f||2==f||0==u&&0==f}},v=function(t){for(var r=B.getBCHTypeNumber(e),n=0;n<18;n+=1){var a=!t&&1==(r>>n&1);o[Math.floor(n/3)][n%3+i-8-3]=a}for(n=0;n<18;n+=1){a=!t&&1==(r>>n&1);o[n%3+i-8-3][Math.floor(n/3)]=a}},d=function(t,r){for(var e=n<<3|r,a=B.getBCHTypeInfo(e),u=0;u<15;u+=1){var f=!t&&1==(a>>u&1);u<6?o[u][8]=f:u<8?o[u+1][8]=f:o[i-15+u][8]=f}for(u=0;u<15;u+=1){f=!t&&1==(a>>u&1);u<8?o[8][i-u-1]=f:u<9?o[8][15-u-1+1]=f:o[8][15-u-1]=f}o[i-8][8]=!t},w=function(t,r){for(var e=-1,n=i-1,a=7,u=0,f=B.getMaskFunction(r),c=i-1;c>0;c-=2)for(6==c&&(c-=1);;){for(var g=0;g<2;g+=1)if(null==o[n][c-g]){var l=!1;u<t.length&&(l=1==(t[u]>>>a&1)),f(n,c-g)&&(l=!l),o[n][c-g]=l,-1==(a-=1)&&(u+=1,a=7)}if((n+=e)<0||i<=n){n-=e,e=-e;break}}},p=function(t,r,e){for(var n=A.getRSBlocks(t,r),o=b(),i=0;i<e.length;i+=1){var a=e[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var u=0;for(i=0;i<n.length;i+=1)u+=n[i].dataCount;if(o.getLengthInBits()>8*u)throw"code length overflow. ("+o.getLengthInBits()+">"+8*u+")";for(o.getLengthInBits()+4<=8*u&&o.put(0,4);o.getLengthInBits()%8!=0;)o.putBit(!1);for(;!(o.getLengthInBits()>=8*u||(o.put(236,8),o.getLengthInBits()>=8*u));)o.put(17,8);return function(t,r){for(var e=0,n=0,o=0,i=new Array(r.length),a=new Array(r.length),u=0;u<r.length;u+=1){var f=r[u].dataCount,c=r[u].totalCount-f;n=Math.max(n,f),o=Math.max(o,c),i[u]=new Array(f);for(var g=0;g<i[u].length;g+=1)i[u][g]=255&t.getBuffer()[g+e];e+=f;var l=B.getErrorCorrectPolynomial(c),h=k(i[u],l.getLength()-1).mod(l);for(a[u]=new Array(l.getLength()-1),g=0;g<a[u].length;g+=1){var s=g+h.getLength()-a[u].length;a[u][g]=s>=0?h.getAt(s):0}}var v=0;for(g=0;g<r.length;g+=1)v+=r[g].totalCount;var d=new Array(v),w=0;for(g=0;g<n;g+=1)for(u=0;u<r.length;u+=1)g<i[u].length&&(d[w]=i[u][g],w+=1);for(g=0;g<o;g+=1)for(u=0;u<r.length;u+=1)g<a[u].length&&(d[w]=a[u][g],w+=1);return d}(o,n)};f.addData=function(t,r){var e=null;switch(r=r||"Byte"){case"Numeric":e=M(t);break;case"Alphanumeric":e=x(t);break;case"Byte":e=m(t);break;case"Kanji":e=L(t);break;default:throw"mode:"+r}u.push(e),a=null},f.isDark=function(t,r){if(t<0||i<=t||r<0||i<=r)throw t+","+r;return o[t][r]},f.getModuleCount=function(){return i},f.make=function(){if(e<1){for(var t=1;t<40;t++){for(var r=A.getRSBlocks(t,n),o=b(),i=0;i<u.length;i++){var a=u[i];o.put(a.getMode(),4),o.put(a.getLength(),B.getLengthInBits(a.getMode(),t)),a.write(o)}var g=0;for(i=0;i<r.length;i++)g+=r[i].dataCount;if(o.getLengthInBits()<=8*g)break}e=t}c(!1,function(){for(var t=0,r=0,e=0;e<8;e+=1){c(!0,e);var n=B.getLostPoint(f);(0==e||t>n)&&(t=n,r=e)}return r}())},f.createTableTag=function(t,r){t=t||2;var e="";e+='<table style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: "+(r=void 0===r?4*t:r)+"px;",e+='">',e+="<tbody>";for(var n=0;n<f.getModuleCount();n+=1){e+="<tr>";for(var o=0;o<f.getModuleCount();o+=1)e+='<td style="',e+=" border-width: 0px; border-style: none;",e+=" border-collapse: collapse;",e+=" padding: 0px; margin: 0px;",e+=" width: "+t+"px;",e+=" height: "+t+"px;",e+=" background-color: ",e+=f.isDark(n,o)?"#000000":"#ffffff",e+=";",e+='"/>';e+="</tr>"}return e+="</tbody>",e+="</table>"},f.createSvgTag=function(t,r,e,n){var o={};"object"==typeof arguments[0]&&(t=(o=arguments[0]).cellSize,r=o.margin,e=o.alt,n=o.title),t=t||2,r=void 0===r?4*t:r,(e="string"==typeof e?{text:e}:e||{}).text=e.text||null,e.id=e.text?e.id||"qrcode-description":null,(n="string"==typeof n?{text:n}:n||{}).text=n.text||null,n.id=n.text?n.id||"qrcode-title":null;var i,a,u,c,g=f.getModuleCount()*t+2*r,l="";for(c="l"+t+",0 0,"+t+" -"+t+",0 0,-"+t+"z ",l+='<svg version="1.1" xmlns="http://www.w3.org/2000/svg"',l+=o.scalable?"":' width="'+g+'px" height="'+g+'px"',l+=' viewBox="0 0 '+g+" "+g+'" ',l+=' preserveAspectRatio="xMinYMin meet"',l+=n.text||e.text?' role="img" aria-labelledby="'+y([n.id,e.id].join(" ").trim())+'"':"",l+=">",l+=n.text?'<title id="'+y(n.id)+'">'+y(n.text)+"</title>":"",l+=e.text?'<description id="'+y(e.id)+'">'+y(e.text)+"</description>":"",l+='<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>',l+='<path d="',a=0;a<f.getModuleCount();a+=1)for(u=a*t+r,i=0;i<f.getModuleCount();i+=1)f.isDark(a,i)&&(l+="M"+(i*t+r)+","+u+c);return l+='" stroke="transparent" fill="black"/>',l+="</svg>"},f.createDataURL=function(t,r){t=t||2,r=void 0===r?4*t:r;var e=f.getModuleCount()*t+2*r,n=r,o=e-r;return I(e,e,function(r,e){if(n<=r&&r<o&&n<=e&&e<o){var i=Math.floor((r-n)/t),a=Math.floor((e-n)/t);return f.isDark(a,i)?0:1}return 1})},f.createImgTag=function(t,r,e){t=t||2,r=void 0===r?4*t:r;var n=f.getModuleCount()*t+2*r,o="";return o+="<img",o+=' src="',o+=f.createDataURL(t,r),o+='"',o+=' width="',o+=n,o+='"',o+=' height="',o+=n,o+='"',e&&(o+=' alt="',o+=y(e),o+='"'),o+="/>"};var y=function(t){for(var r="",e=0;e<t.length;e+=1){var n=t.charAt(e);switch(n){case"<":r+="&lt;";break;case">":r+="&gt;";break;case"&":r+="&amp;";break;case'"':r+="&quot;";break;default:r+=n}}return r};return f.createASCII=function(t,r){if((t=t||1)<2)return function(t){t=void 0===t?2:t;var r,e,n,o,i,a=1*f.getModuleCount()+2*t,u=t,c=a-t,g={"██":"█","█ ":"▀"," █":"▄","  ":" "},l={"██":"▀","█ ":"▀"," █":" ","  ":" "},h="";for(r=0;r<a;r+=2){for(n=Math.floor((r-u)/1),o=Math.floor((r+1-u)/1),e=0;e<a;e+=1)i="█",u<=e&&e<c&&u<=r&&r<c&&f.isDark(n,Math.floor((e-u)/1))&&(i=" "),u<=e&&e<c&&u<=r+1&&r+1<c&&f.isDark(o,Math.floor((e-u)/1))?i+=" ":i+="█",h+=t<1&&r+1>=c?l[i]:g[i];h+="\n"}return a%2&&t>0?h.substring(0,h.length-a-1)+Array(a+1).join("▀"):h.substring(0,h.length-1)}(r);t-=1,r=void 0===r?2*t:r;var e,n,o,i,a=f.getModuleCount()*t+2*r,u=r,c=a-r,g=Array(t+1).join("██"),l=Array(t+1).join("  "),h="",s="";for(e=0;e<a;e+=1){for(o=Math.floor((e-u)/t),s="",n=0;n<a;n+=1)i=1,u<=n&&n<c&&u<=e&&e<c&&f.isDark(o,Math.floor((n-u)/t))&&(i=0),s+=i?g:l;for(o=0;o<t;o+=1)h+=s+"\n"}return h.substring(0,h.length-1)},f.renderTo2dContext=function(t,r){r=r||2;for(var e=f.getModuleCount(),n=0;n<e;n++)for(var o=0;o<e;o++)t.fillStyle=f.isDark(n,o)?"black":"white",t.fillRect(o*r,n*r,r,r)},f};t.stringToBytes=(t.stringToBytesFuncs={default:function(t){for(var r=[],e=0;e<t.length;e+=1){var n=t.charCodeAt(e);r.push(255&n)}return r}}).default,t.createStringToBytes=function(t,r){var e=function(){for(var e=S(t),n=function(){var t=e.read();if(-1==t)throw"eof";return t},o=0,i={};;){var a=e.read();if(-1==a)break;var u=n(),f=n()<<8|n();i[String.fromCharCode(a<<8|u)]=f,o+=1}if(o!=r)throw o+" != "+r;return i}(),n="?".charCodeAt(0);return function(t){for(var r=[],o=0;o<t.length;o+=1){var i=t.charCodeAt(o);if(i<128)r.push(i);else{var a=e[t.charAt(o)];"number"==typeof a?(255&a)==a?r.push(a):(r.push(a>>>8),r.push(255&a)):r.push(n)}}return r}};var r,e,n,o,i,a=1,u=2,f=4,c=8,g={L:1,M:0,Q:3,H:2},l=0,h=1,s=2,v=3,d=4,w=5,p=6,y=7,B=(r=[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],e=1335,n=7973,i=function(t){for(var r=0;0!=t;)r+=1,t>>>=1;return r},(o={}).getBCHTypeInfo=function(t){for(var r=t<<10;i(r)-i(e)>=0;)r^=e<<i(r)-i(e);return 21522^(t<<10|r)},o.getBCHTypeNumber=function(t){for(var r=t<<12;i(r)-i(n)>=0;)r^=n<<i(r)-i(n);return t<<12|r},o.getPatternPosition=function(t){return r[t-1]},o.getMaskFunction=function(t){switch(t){case l:return function(t,r){return(t+r)%2==0};case h:return function(t,r){return t%2==0};case s:return function(t,r){return r%3==0};case v:return function(t,r){return(t+r)%3==0};case d:return function(t,r){return(Math.floor(t/2)+Math.floor(r/3))%2==0};case w:return function(t,r){return t*r%2+t*r%3==0};case p:return function(t,r){return(t*r%2+t*r%3)%2==0};case y:return function(t,r){return(t*r%3+(t+r)%2)%2==0};default:throw"bad maskPattern:"+t}},o.getErrorCorrectPolynomial=function(t){for(var r=k([1],0),e=0;e<t;e+=1)r=r.multiply(k([1,C.gexp(e)],0));return r},o.getLengthInBits=function(t,r){if(1<=r&&r<10)switch(t){case a:return 10;case u:return 9;case f:case c:return 8;default:throw"mode:"+t}else if(r<27)switch(t){case a:return 12;case u:return 11;case f:return 16;case c:return 10;default:throw"mode:"+t}else{if(!(r<41))throw"type:"+r;switch(t){case a:return 14;case u:return 13;case f:return 16;case c:return 12;default:throw"mode:"+t}}},o.getLostPoint=function(t){for(var r=t.getModuleCount(),e=0,n=0;n<r;n+=1)for(var o=0;o<r;o+=1){for(var i=0,a=t.isDark(n,o),u=-1;u<=1;u+=1)if(!(n+u<0||r<=n+u))for(var f=-1;f<=1;f+=1)o+f<0||r<=o+f||0==u&&0==f||a==t.isDark(n+u,o+f)&&(i+=1);i>5&&(e+=3+i-5)}for(n=0;n<r-1;n+=1)for(o=0;o<r-1;o+=1){var c=0;t.isDark(n,o)&&(c+=1),t.isDark(n+1,o)&&(c+=1),t.isDark(n,o+1)&&(c+=1),t.isDark(n+1,o+1)&&(c+=1),0!=c&&4!=c||(e+=3)}for(n=0;n<r;n+=1)for(o=0;o<r-6;o+=1)t.isDark(n,o)&&!t.isDark(n,o+1)&&t.isDark(n,o+2)&&t.isDark(n,o+3)&&t.isDark(n,o+4)&&!t.isDark(n,o+5)&&t.isDark(n,o+6)&&(e+=40);for(o=0;o<r;o+=1)for(n=0;n<r-6;n+=1)t.isDark(n,o)&&!t.isDark(n+1,o)&&t.isDark(n+2,o)&&t.isDark(n+3,o)&&t.isDark(n+4,o)&&!t.isDark(n+5,o)&&t.isDark(n+6,o)&&(e+=40);var g=0;for(o=0;o<r;o+=1)for(n=0;n<r;n+=1)t.isDark(n,o)&&(g+=1);return e+=Math.abs(100*g/r/r-50)/5*10},o),C=function(){for(var t=new Array(256),r=new Array(256),e=0;e<8;e+=1)t[e]=1<<e;for(e=8;e<256;e+=1)t[e]=t[e-4]^t[e-5]^t[e-6]^t[e-8];for(e=0;e<255;e+=1)r[t[e]]=e;var n={glog:function(t){if(t<1)throw"glog("+t+")";return r[t]},gexp:function(r){for(;r<0;)r+=255;for(;r>=256;)r-=255;return t[r]}};return n}();function k(t,r){if(void 0===t.length)throw t.length+"/"+r;var e=function(){for(var e=0;e<t.length&&0==t[e];)e+=1;for(var n=new Array(t.length-e+r),o=0;o<t.length-e;o+=1)n[o]=t[o+e];return n}(),n={getAt:function(t){return e[t]},getLength:function(){return e.length},multiply:function(t){for(var r=new Array(n.getLength()+t.getLength()-1),e=0;e<n.getLength();e+=1)for(var o=0;o<t.getLength();o+=1)r[e+o]^=C.gexp(C.glog(n.getAt(e))+C.glog(t.getAt(o)));return k(r,0)},mod:function(t){if(n.getLength()-t.getLength()<0)return n;for(var r=C.glog(n.getAt(0))-C.glog(t.getAt(0)),e=new Array(n.getLength()),o=0;o<n.getLength();o+=1)e[o]=n.getAt(o);for(o=0;o<t.getLength();o+=1)e[o]^=C.gexp(C.glog(t.getAt(o))+r);return k(e,0).mod(t)}};return n}var A=function(){var t=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12,7,37,13],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],r=function(t,r){var e={};return e.totalCount=t,e.dataCount=r,e},e={};return e.getRSBlocks=function(e,n){var o=function(r,e){switch(e){case g.L:return t[4*(r-1)+0];case g.M:return t[4*(r-1)+1];case g.Q:return t[4*(r-1)+2];case g.H:return t[4*(r-1)+3];default:return}}(e,n);if(void 0===o)throw"bad rs block @ typeNumber:"+e+"/errorCorrectionLevel:"+n;for(var i=o.length/3,a=[],u=0;u<i;u+=1)for(var f=o[3*u+0],c=o[3*u+1],l=o[3*u+2],h=0;h<f;h+=1)a.push(r(c,l));return a},e}(),b=function(){var t=[],r=0,e={getBuffer:function(){return t},getAt:function(r){var e=Math.floor(r/8);return 1==(t[e]>>>7-r%8&1)},put:function(t,r){for(var n=0;n<r;n+=1)e.putBit(1==(t>>>r-n-1&1))},getLengthInBits:function(){return r},putBit:function(e){var n=Math.floor(r/8);t.length<=n&&t.push(0),e&&(t[n]|=128>>>r%8),r+=1}};return e},M=function(t){var r=a,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+2<r.length;)t.put(o(r.substring(n,n+3)),10),n+=3;n<r.length&&(r.length-n==1?t.put(o(r.substring(n,n+1)),4):r.length-n==2&&t.put(o(r.substring(n,n+2)),7))}},o=function(t){for(var r=0,e=0;e<t.length;e+=1)r=10*r+i(t.charAt(e));return r},i=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);throw"illegal char :"+t};return n},x=function(t){var r=u,e=t,n={getMode:function(){return r},getLength:function(t){return e.length},write:function(t){for(var r=e,n=0;n+1<r.length;)t.put(45*o(r.charAt(n))+o(r.charAt(n+1)),11),n+=2;n<r.length&&t.put(o(r.charAt(n)),6)}},o=function(t){if("0"<=t&&t<="9")return t.charCodeAt(0)-"0".charCodeAt(0);if("A"<=t&&t<="Z")return t.charCodeAt(0)-"A".charCodeAt(0)+10;switch(t){case" ":return 36;case"$":return 37;case"%":return 38;case"*":return 39;case"+":return 40;case"-":return 41;case".":return 42;case"/":return 43;case":":return 44;default:throw"illegal char :"+t}};return n},m=function(r){var e=f,n=t.stringToBytes(r),o={getMode:function(){return e},getLength:function(t){return n.length},write:function(t){for(var r=0;r<n.length;r+=1)t.put(n[r],8)}};return o},L=function(r){var e=c,n=t.stringToBytesFuncs.SJIS;if(!n)throw"sjis not supported.";!function(){var t=n("友");if(2!=t.length||38726!=(t[0]<<8|t[1]))throw"sjis not supported."}();var o=n(r),i={getMode:function(){return e},getLength:function(t){return~~(o.length/2)},write:function(t){for(var r=o,e=0;e+1<r.length;){var n=(255&r[e])<<8|255&r[e+1];if(33088<=n&&n<=40956)n-=33088;else{if(!(57408<=n&&n<=60351))throw"illegal char at "+(e+1)+"/"+n;n-=49472}n=192*(n>>>8&255)+(255&n),t.put(n,13),e+=2}if(e<r.length)throw"illegal char at "+(e+1)}};return i},D=function(){var t=[],r={writeByte:function(r){t.push(255&r)},writeShort:function(t){r.writeByte(t),r.writeByte(t>>>8)},writeBytes:function(t,e,n){e=e||0,n=n||t.length;for(var o=0;o<n;o+=1)r.writeByte(t[o+e])},writeString:function(t){for(var e=0;e<t.length;e+=1)r.writeByte(t.charCodeAt(e))},toByteArray:function(){return t},toString:function(){var r="";r+="[";for(var e=0;e<t.length;e+=1)e>0&&(r+=","),r+=t[e];return r+="]"}};return r},S=function(t){var r=t,e=0,n=0,o=0,i={read:function(){for(;o<8;){if(e>=r.length){if(0==o)return-1;throw"unexpected end of file./"+o}var t=r.charAt(e);if(e+=1,"="==t)return o=0,-1;t.match(/^\s$/)||(n=n<<6|a(t.charCodeAt(0)),o+=6)}var i=n>>>o-8&255;return o-=8,i}},a=function(t){if(65<=t&&t<=90)return t-65;if(97<=t&&t<=122)return t-97+26;if(48<=t&&t<=57)return t-48+52;if(43==t)return 62;if(47==t)return 63;throw"c:"+t};return i},I=function(t,r,e){for(var n=function(t,r){var e=t,n=r,o=new Array(t*r),i={setPixel:function(t,r,n){o[r*e+t]=n},write:function(t){t.writeString("GIF87a"),t.writeShort(e),t.writeShort(n),t.writeByte(128),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(0),t.writeByte(255),t.writeByte(255),t.writeByte(255),t.writeString(","),t.writeShort(0),t.writeShort(0),t.writeShort(e),t.writeShort(n),t.writeByte(0);var r=a(2);t.writeByte(2);for(var o=0;r.length-o>255;)t.writeByte(255),t.writeBytes(r,o,255),o+=255;t.writeByte(r.length-o),t.writeBytes(r,o,r.length-o),t.writeByte(0),t.writeString(";")}},a=function(t){for(var r=1<<t,e=1+(1<<t),n=t+1,i=u(),a=0;a<r;a+=1)i.add(String.fromCharCode(a));i.add(String.fromCharCode(r)),i.add(String.fromCharCode(e));var f,c,g,l=D(),h=(f=l,c=0,g=0,{write:function(t,r){if(t>>>r!=0)throw"length over";for(;c+r>=8;)f.writeByte(255&(t<<c|g)),r-=8-c,t>>>=8-c,g=0,c=0;g|=t<<c,c+=r},flush:function(){c>0&&f.writeByte(g)}});h.write(r,n);var s=0,v=String.fromCharCode(o[s]);for(s+=1;s<o.length;){var d=String.fromCharCode(o[s]);s+=1,i.contains(v+d)?v+=d:(h.write(i.indexOf(v),n),i.size()<4095&&(i.size()==1<<n&&(n+=1),i.add(v+d)),v=d)}return h.write(i.indexOf(v),n),h.write(e,n),h.flush(),l.toByteArray()},u=function(){var t={},r=0,e={add:function(n){if(e.contains(n))throw"dup key:"+n;t[n]=r,r+=1},size:function(){return r},indexOf:function(r){return t[r]},contains:function(r){return void 0!==t[r]}};return e};return i}(t,r),o=0;o<r;o+=1)for(var i=0;i<t;i+=1)n.setPixel(i,o,e(i,o));var a=D();n.write(a);for(var u=function(){var t=0,r=0,e=0,n="",o={},i=function(t){n+=String.fromCharCode(a(63&t))},a=function(t){if(t<0);else{if(t<26)return 65+t;if(t<52)return t-26+97;if(t<62)return t-52+48;if(62==t)return 43;if(63==t)return 47}throw"n:"+t};return o.writeByte=function(n){for(t=t<<8|255&n,r+=8,e+=1;r>=6;)i(t>>>r-6),r-=6},o.flush=function(){if(r>0&&(i(t<<6-r),t=0,r=0),e%3!=0)for(var o=3-e%3,a=0;a<o;a+=1)n+="="},o.toString=function(){return n},o}(),f=a.toByteArray(),c=0;c<f.length;c+=1)u.writeByte(f[c]);return u.flush(),"data:image/gif;base64,"+u};return t}();qrcode.stringToBytesFuncs["UTF-8"]=function(t){return function(t){for(var r=[],e=0;e<t.length;e++){var n=t.charCodeAt(e);n<128?r.push(n):n<2048?r.push(192|n>>6,128|63&n):n<55296||n>=57344?r.push(224|n>>12,128|n>>6&63,128|63&n):(e++,n=65536+((1023&n)<<10|1023&t.charCodeAt(e)),r.push(240|n>>18,128|n>>12&63,128|n>>6&63,128|63&n))}return r}(t)},function(t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports&&(module.exports=t())}(function(){return qrcode});
+</script>
+<script>
+(function(){
+"use strict";
+const KEY = "ideaCatcher.v1", UIKEY = KEY+".ui", BAK = KEY+".bak";
+const VERSION = 2;
+const ARTICLE = "https://x.com/thedankoe/status/2112586533610156368";
+const COLS = ["ideas","sources","creators","posts","guides"];
+const SINGLES = ["settings","plan"];
+const LIM = 100;
+
+const STEPS = [
+  {id:"start",  n:"0",  label:"Start & 30-day plan"},
+  {id:"museum", n:"A1", label:"Idea museum"},
+  {id:"density",n:"A2", label:"Dense sources"},
+  {id:"study",  n:"B1", label:"Study what works"},
+  {id:"angle",  n:"B2", label:"Find your angle"},
+  {id:"draft",  n:"✎",  label:"Merge & post"},
+  {id:"listen", n:"W3", label:"Replies & questions"},
+  {id:"guide",  n:"W4", label:"One-page guide"}
+];
+const CAPTURE_TYPES = ["Random thought","Social post that inspired me","Video note","Anything else"];
+const SOURCE_KINDS = ["Old or little-known book","Curated blog or account","Creator who always posts something worth thinking about"];
+const SOURCE_GROUPS = ["Old or little-known books","Curated blogs and accounts","Creators who always post something worth thinking about"];
+const PLATFORMS = ["TikTok video","X post","Newsletter","Instagram","LinkedIn","Other"];
+const ANGLE_QS = [
+  "How would [a thinker I love] say this?",
+  "How would I say this to my past self?",
+  "How can I redefine the idea?",
+  "What is the common perspective, and what do I disagree with?",
+  "Why does this matter to the everyday person?"
+];
+// Form fields that survive navigation, reloads and closed tabs (no lost work mid-edit)
+const FORM = new Set(["capText","capType","capSource","capWhy","srcName","srcKind","srcUrl","srcNote","crName","crUrl","crNote","swText","swUrl","swWhy","swPrin","opText","drPlat","drText","gQText"]);
+
+/* ---------- helpers ---------- */
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $ = (sel,root=document)=>root.querySelector(sel);
+const fmt = t => { const d=new Date(t); return isNaN(d)?"":d.toLocaleDateString(undefined,{month:"short",day:"numeric"}); };
+const dayKey = t => { const d=new Date(t); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); };
+const clone = o => JSON.parse(JSON.stringify(o));
+const isObj = o => !!o && typeof o==="object" && !Array.isArray(o);
+const str = v => v==null ? "" : (typeof v==="string" ? v : (typeof v==="number"||typeof v==="boolean" ? String(v) : ""));
+const num = v => { const n=+v; return isFinite(n)?n:0; };
+const okId = v => typeof v==="string" && /^[\w~-]{1,80}$/.test(v);
+
+/* ---------- content hashing (for safe merging between tabs, backups and future devices) ---------- */
+const META = new Set(["_h","_hist","updatedAt"]);
+// Empty values ("" / 0 / false / null / empty lists) count as "not set", so a freshly created item and the
+// same item after a save/load round trip (which fills in defaults) hash identically.
+function isEmpty(v){ if(v==null||v===""||v===false||v===0) return true; if(Array.isArray(v)) return v.every(isEmpty); if(typeof v==="object") return Object.keys(v).every(k=>isEmpty(v[k])); return false; }
+function stable(v){
+  if(v===null||typeof v!=="object") return JSON.stringify(v===undefined?null:v);
+  if(Array.isArray(v)) return "["+v.map(stable).join(",")+"]";
+  return "{"+Object.keys(v).filter(k=>!META.has(k)&&!isEmpty(v[k])).sort().map(k=>JSON.stringify(k)+":"+stable(v[k])).join(",")+"}";
+}
+function hash(o){ const s=stable(o); let h=0x811c9dc5; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return (h>>>0).toString(36)+"."+s.length.toString(36); }
+function stamp(o){
+  const h=hash(o);
+  if(o._h!==h){ if(o._h){ o._hist=(o._hist||[]).concat(o._h).slice(-30); } o._h=h; o.updatedAt=Date.now(); }
+  return o;
+}
+const byCreated = (a,b)=> (a.createdAt-b.createdAt) || (a.id<b.id?-1:a.id>b.id?1:0);
+function stampAll(d){
+  COLS.forEach(c=>{ d[c].forEach(stamp); d[c].sort(byCreated); });
+  SINGLES.forEach(k=>stamp(d[k]));
+  const cut=Date.now()-180*864e5; for(const id in d.deleted) if(d.deleted[id].at<cut) delete d.deleted[id];
+}
+
+/* ---------- data model ---------- */
+function blank(){
+  const d = {
+    app:"idea-catcher", version:VERSION,
+    settings:{topics:"", thinkers:""},
+    ideas:[], sources:[], creators:[], posts:[], guides:[],
+    plan:{phone:false, keepGoing:false},
+    deleted:{},    // tombstones {id:{at,h}} so a delete on one copy isn't undone by another copy
+    conflicts:[]   // settings/plan versions that clashed, kept so nothing is lost
+  };
+  SINGLES.forEach(k=>{ d[k]._h=hash(d[k]); d[k].updatedAt=0; });
+  return d;
+}
+function blankUi(){ return {tab:"start", angleIdea:"", draftIdea:"", draftValidated:"", draftAngle:"", guideQ:"", filter:"", srcCapture:"", swipeFor:"", form:{}, limits:{}}; }
+
+// Turn anything (old versions, partial backups, hand-edited files) into a valid data object.
+// Returns null if it isn't Idea Catcher data at all. Sets lossy=true if something had to be dropped.
+function normalize(raw){
+  if(!isObj(raw)) return null;
+  const known = COLS.concat(SINGLES).some(k=>k in raw);
+  if(!known) return null;
+  const d = blank(); let lossy=false;
+  const meta = (o,src) => { if(typeof src._h==="string") o._h=src._h; if(Array.isArray(src._hist)) o._hist=src._hist.filter(x=>typeof x==="string").slice(-30); if(src.updatedAt) o.updatedAt=num(src.updatedAt); return o; };
+  if(isObj(raw.settings)){ d.settings=meta({topics:str(raw.settings.topics), thinkers:str(raw.settings.thinkers)}, raw.settings); }
+  if(isObj(raw.plan)){ d.plan=meta({phone:!!raw.plan.phone, keepGoing:!!raw.plan.keepGoing}, raw.plan); }
+  const seen = new Set();
+  const fixId = v => { let id=okId(v)?v:uid(); while(seen.has(id)) id=uid(); seen.add(id); return id; };
+  const list = k => { if(raw[k]==null) return []; if(!Array.isArray(raw[k])){ lossy=true; return []; } const a=raw[k].filter(isObj); if(a.length!==raw[k].length) lossy=true; return a; };
+  const base = (i) => { const o={...i}; o.id=fixId(i.id); o.createdAt=num(i.createdAt)||Date.now(); if(i.conflictOf!=null) o.conflictOf=str(i.conflictOf); return meta(o,i); };
+  d.ideas = list("ideas").map(i=>{
+    const o=base(i); o.text=str(i.text); o.type=str(i.type); o.board=i.board==="validated"?"validated":"favorite";
+    o.source=str(i.source); o.why=str(i.why); o.principle=str(i.principle); o.creatorId=okId(i.creatorId)?i.creatorId:"";
+    if(i.angles!=null){
+      const a=isObj(i.angles)?i.angles:{}; const ans=Array.isArray(a.answers)?a.answers:[];
+      o.angles={answers:[0,1,2,3,4].map(k=>str(ans[k])), stars:[...new Set((Array.isArray(a.stars)?a.stars:[]).map(Number).filter(k=>k>=0&&k<5&&k%1===0))].slice(-2),
+        rate:isObj(a.rate)?a.rate:{}, truth:str(a.truth), extra:str(a.extra)};
+    }
+    return o;
+  });
+  d.sources = list("sources").map(s=>{ const o=base(s); o.name=str(s.name); o.kind=SOURCE_KINDS.includes(s.kind)?s.kind:SOURCE_KINDS[0]; o.url=str(s.url); o.note=str(s.note); return o; });
+  d.creators = list("creators").map(c=>{ const o=base(c); o.name=str(c.name); o.url=str(c.url); o.note=str(c.note); return o; });
+  d.posts = list("posts").map(p=>{ const o=base(p); o.ideaId=okId(p.ideaId)?p.ideaId:""; o.validatedId=okId(p.validatedId)?p.validatedId:"";
+    o.angleIdx=(p.angleIdx==null||p.angleIdx==="")?null:num(p.angleIdx); o.platform=str(p.platform)||"Other"; o.text=str(p.text);
+    o.status=p.status==="posted"?"posted":"draft"; if(p.postedAt) o.postedAt=num(p.postedAt); o.link=str(p.link); o.replies=Math.max(0,num(p.replies));
+    o.questions=(Array.isArray(p.questions)?p.questions:[]).filter(isObj).map(q=>({id:okId(q.id)?q.id:uid(), text:str(q.text)})); return o; });
+  d.guides = list("guides").map(g=>{ const o=base(g); o.question=str(g.question); o.postId=okId(g.postId)?g.postId:""; o.title=str(g.title); o.body=str(g.body); o.emailLink=str(g.emailLink);
+    o.made=!!g.made; o.out=!!g.out; o.larger=!!g.larger; return o; });
+  if(isObj(raw.deleted)) for(const id in raw.deleted){ const t=raw.deleted[id]; if(okId(id)&&isObj(t)) d.deleted[id]={at:num(t.at), h:str(t.h)}; }
+  if(Array.isArray(raw.conflicts)) d.conflicts=raw.conflicts.filter(c=>isObj(c)&&typeof c.id==="string"&&SINGLES.includes(c.what)&&isObj(c.value)).map(c=>({id:c.id, what:c.what, value:c.value, at:num(c.at)}));
+  if(num(raw.version)>VERSION) lossy=true;
+  stampAll(d);
+  return {data:d, lossy, ui:isObj(raw.ui)?raw.ui:null};
+}
+
+/* ---------- merge: never silently drop an edit ---------- */
+// 0 same, 1 a is newer, -1 b is newer, 2 both changed (conflict)
+function rel(a,b){ if(a._h===b._h) return 0; if((a._hist||[]).includes(b._h)) return 1; if((b._hist||[]).includes(a._h)) return -1; return 2; }
+function winner(a,b){ const d=(b.updatedAt||0)-(a.updatedAt||0); return (d>0 || (d===0 && b._h>a._h)) ? [b,a] : [a,b]; }
+function merge2(a,b){
+  const out = blank();
+  const del = {...b.deleted}; for(const id in a.deleted){ if(!del[id] || del[id].at<a.deleted[id].at) del[id]=a.deleted[id]; }
+  const confl = new Map(); a.conflicts.concat(b.conflicts).forEach(c=>confl.set(c.id,c));
+  COLS.forEach(c=>{
+    const A=new Map(a[c].map(x=>[x.id,x])), B=new Map(b[c].map(x=>[x.id,x]));
+    const ids=new Set([...A.keys(),...B.keys()]); const res=new Map();
+    for(const id of ids){
+      const x=A.get(id), y=B.get(id);
+      if(x && y){
+        const r=rel(x,y);
+        if(r===0) res.set(id, (y.updatedAt||0)>(x.updatedAt||0)?y:x);
+        else if(r===1) res.set(id,x);
+        else if(r===-1) res.set(id,y);
+        else {
+          const [w,l]=winner(x,y); const wc=clone(w);
+          wc._hist=[...new Set([...(w._hist||[]),...(l._hist||[]),l._h])].slice(-30); res.set(id,wc);
+          const cid=(id.split("~c")[0]+"~c"+l._h.replace(/\W/g,"")).slice(0,80);
+          if(!ids.has(cid) && !res.has(cid)){ const lc=clone(l); lc.id=cid; lc.conflictOf=id; lc.conflictAt=l.updatedAt||0; delete lc._h; delete lc._hist; stamp(lc); res.set(cid,lc); }
+        }
+        delete del[id];
+      } else {
+        const it=x||y, t=del[id];
+        if(t && t.h===it._h) continue;   // deleted on the other copy and unchanged here: honour the delete
+        if(t) delete del[id];            // edited after/while being deleted elsewhere: keep it, never lose an edit
+        res.set(id,it);
+      }
+    }
+    out[c]=[...res.values()].sort(byCreated);
+  });
+  SINGLES.forEach(k=>{
+    const x=a[k], y=b[k], r=rel(x,y);
+    if(r===0||r===1) out[k]=r===0&&(y.updatedAt||0)>(x.updatedAt||0)?y:x;
+    else if(r===-1) out[k]=y;
+    else { const [w,l]=winner(x,y); const wc=clone(w); wc._hist=[...new Set([...(w._hist||[]),...(l._hist||[]),l._h])].slice(-30); out[k]=wc;
+      const v=clone(l); delete v._h; delete v._hist; delete v.updatedAt; const cid=k+"~"+l._h; if(!confl.has(cid)) confl.set(cid,{id:cid, what:k, value:v, at:l.updatedAt||0}); }
+  });
+  out.deleted=del; out.conflicts=[...confl.values()].sort((p,q)=>p.at-q.at||(p.id<q.id?-1:1));
+  return out;
+}
+
+/* ---------- storage ---------- */
+let notice = "";
+let lastRaw = null;
+let S, U;
+function readUi(){ try{ const u=JSON.parse(localStorage.getItem(UIKEY)||"null"); if(isObj(u)) return Object.assign(blankUi(),u,{form:isObj(u.form)?u.form:{}, limits:isObj(u.limits)?u.limits:{}}); }catch(_){} return null; }
+function load(){
+  let raw=null; try{ raw=localStorage.getItem(KEY); }catch(_){}
+  U = readUi();
+  if(raw==null){ S=blank(); U=U||blankUi(); return; }
+  let n=null; try{ n=normalize(JSON.parse(raw)); }catch(_){}
+  if(n){
+    S=n.data; lastRaw=raw;
+    if(!U) U=Object.assign(blankUi(), n.ui||{}, {form:{}, limits:{}});
+    if(n.lossy){ keepCopy(raw); notice="Some saved data was in an unexpected format. A full copy of the original was kept in this browser, so nothing is lost. Export a backup to be safe."; }
+    else { try{ localStorage.setItem(BAK, raw); }catch(_){} }   // last known-good copy
+  } else {
+    keepCopy(raw);
+    let b=null; try{ b=normalize(JSON.parse(localStorage.getItem(BAK))); }catch(_){}
+    S = b ? b.data : blank();
+    notice = b ? "Your saved data was damaged, so the last good copy from this browser was restored. The damaged version was kept too, nothing was wiped."
+               : "Your saved data couldn't be read. It was kept untouched in this browser (not wiped). Import a backup file to continue where you left off.";
+    try{ localStorage.setItem(KEY, JSON.stringify(S)); lastRaw=localStorage.getItem(KEY); }catch(_){}
+  }
+  U = U || blankUi();
+}
+function keepCopy(raw){ try{ localStorage.setItem(KEY+".damaged-"+Date.now(), raw); }catch(_){} }
+let saveTimer=0, uiTimer=0, saveErr=0;
+function save(){
+  clearTimeout(saveTimer); saveTimer=0;
+  stampAll(S);
+  let changed=false;
+  try{
+    const cur=localStorage.getItem(KEY);
+    if(cur!=null && cur!==lastRaw){   // another tab wrote meanwhile: merge, don't overwrite
+      let o=null; try{ o=normalize(JSON.parse(cur)); }catch(_){}
+      if(o){ const before=stable(S); S=merge2(S,o.data); changed=stable(S)!==before; }
+    }
+    const raw=JSON.stringify(S); localStorage.setItem(KEY,raw); lastRaw=raw;
+    saveErr=0;
+  }catch(e){ saveErr=Date.now(); toast("Couldn't save: this browser's storage is full. Export a backup now.", null, true); }
+  saveUi();
+  if(changed) setTimeout(renderKeep,0);
+  if(typeof scheduleSync==="function") scheduleSync();
+}
+function saveSoon(){ clearTimeout(saveTimer); saveTimer=setTimeout(save,300); }
+function saveUi(){ clearTimeout(uiTimer); uiTimer=0; try{ localStorage.setItem(UIKEY, JSON.stringify(U)); }catch(_){} }
+function saveUiSoon(){ clearTimeout(uiTimer); uiTimer=setTimeout(saveUi,300); }
+function flush(){ if(saveTimer) save(); if(uiTimer) saveUi(); }
+addEventListener("pagehide",flush); addEventListener("beforeunload",flush);
+document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") flush(); });
+addEventListener("storage", e=>{
+  if(e.key!==KEY || e.newValue==null) return;
+  let o=null; try{ o=normalize(JSON.parse(e.newValue)); }catch(_){}
+  if(!o) return;
+  stampAll(S); const before=stable(S);
+  S=merge2(S,o.data); lastRaw=e.newValue;
+  const after=stable(S);
+  if(after!==before) renderKeep();
+  if(after!==stable(o.data)) saveSoon();   // we hold something the other tab doesn't
+});
+load();
+
+function toast(m, undo, isErr){
+  if(!isErr && saveErr && Date.now()-saveErr<4000) return;   // don't hide a failed-save warning behind "Saved"
+  const t=$("#toast"); t.innerHTML=esc(m)+(undo?' <button class="btn s" data-act="undo">Undo</button>':"");
+  t.classList.toggle("undo",!!undo); t.classList.add("on"); t.setAttribute("role","status");
+  toast._undo=undo||null; clearTimeout(toast._t);
+  toast._t=setTimeout(()=>{ t.classList.remove("on","undo"); toast._undo=null; }, undo?8000:(isErr?5000:1800));
+}
+function idea(id){ return S.ideas.find(i=>i.id===id); }
+function angleData(i){ if(!i.angles) i.angles={answers:["","","","",""],stars:[],rate:{},truth:"",extra:""}; return i.angles; }
+function anglesDone(i){ return i.angles ? i.angles.answers.filter(a=>a.trim()).length : 0; }
+function linkify(u){ if(!u) return ""; const ok=/^https?:\/\//i.test(u); return ok?`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(u.replace(/^https?:\/\/(www\.)?/,"").slice(0,48))}</a>`:esc(u); }
+async function copy(text, what){
+  let ok=false;
+  try{ await navigator.clipboard.writeText(text); ok=true; }
+  catch(e){ const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select(); try{ ok=document.execCommand("copy"); }catch(_){} ta.remove(); }
+  toast(ok?(what||"Prompt")+" copied":"Couldn't copy automatically. Select the text and copy it.");
+}
+function go(tab){ flush(); U.tab=tab; saveUi(); render(); window.scrollTo(0,0); }
+function limited(list,key){ const n=U.limits[key]||LIM; return {items:list.slice(0,n), more:list.length>n?`<button class="btn s" data-act="more" data-key="${esc(key)}">Show more (${list.length-n} more)</button>`:""}; }
+function cfx(kind,i){ return i.conflictOf?`<span class="pill cfx">Conflict copy</span><button class="btn s ghost" data-act="resolve" data-kind="${kind}" data-id="${esc(i.id)}">Keep both, clear flag</button>`:""; }
+
+/* ---------- derived stats ---------- */
+function stats(){
+  const days = new Set(S.ideas.map(i=>dayKey(i.createdAt)));
+  const creatorSources = S.sources.filter(s=>s.kind===SOURCE_KINDS[2]).length;
+  const fullAngles = S.ideas.filter(i=>anglesDone(i)===5).length;
+  const posted = S.posts.filter(p=>p.status==="posted");
+  const tracked = posted.filter(p=>(+p.replies||0)>0 || (p.questions||[]).length).length;
+  const questions = posted.reduce((n,p)=>n+(p.questions||[]).length,0);
+  const studied = S.creators.filter(c=>S.ideas.some(i=>i.creatorId===c.id)).length;
+  return {days:days.size, creatorSources, fullAngles, posted:posted.length, tracked, questions, studied,
+    fav:S.ideas.filter(i=>i.board==="favorite").length, val:S.ideas.filter(i=>i.board==="validated").length,
+    guides:S.guides.filter(g=>g.made).length, guidesOut:S.guides.filter(g=>g.out).length, larger:S.guides.filter(g=>g.larger).length};
+}
+
+/* ---------- render ---------- */
+function renderNav(){
+  $("#nav").innerHTML = STEPS.map(s=>`<button data-tab="${s.id}" class="${U.tab===s.id?"on":""}" ${U.tab===s.id?'aria-current="page"':""}><b>${s.n}</b>${s.label}</button>`).join("");
+  const on=document.querySelector("#nav button.on"); if(on&&on.scrollIntoView) on.scrollIntoView({block:"nearest",inline:"center"});
+}
+function nextBar(prev,next){
+  const p = STEPS.find(s=>s.id===prev), n = STEPS.find(s=>s.id===next);
+  return `<div class="next">${p?`<button class="btn ghost" data-tab="${p.id}">← ${p.label}</button>`:"<span></span>"}${n?`<button class="btn p" data-tab="${n.id}">Next: ${n.label} →</button>`:""}</div>`;
+}
+function banners(){
+  let h="";
+  if(notice) h+=`<div class="banner" role="alert">${esc(notice)}<div class="row"><button class="btn s" data-act="export">Export a backup</button><button class="btn s ghost" data-act="dismissNotice">Dismiss</button></div></div>`;
+  const copies = COLS.reduce((t,c)=>t+S[c].filter(x=>x.conflictOf).length,0);
+  if(copies) h+=`<div class="banner" role="status">${copies} item${copies===1?" was":"s were"} edited in two places at once. Nothing was thrown away: the other version is kept as a separate item marked <b>Conflict copy</b>. Keep the one you want and delete the other.</div>`;
+  S.conflicts.forEach(c=>{
+    const v=c.value, label=c.what==="settings"?"About you (topics and thinkers)":"30-day plan checkboxes";
+    const shown=c.what==="settings"?`Topics: "${esc(v.topics)}" · Thinkers: "${esc(v.thinkers)}"`:`Phone set up: ${v.phone?"yes":"no"} · Keep going 12 months: ${v.keepGoing?"yes":"no"}`;
+    h+=`<div class="banner" role="status"><b>${label}</b> was changed in two places. The other version: ${shown}<div class="row"><button class="btn s" data-act="useConflict" data-id="${esc(c.id)}">Use that version</button><button class="btn s ghost" data-act="dropConflict" data-id="${esc(c.id)}">Keep current</button></div></div>`;
+  });
+  return h;
+}
+function render(){
+  renderNav();
+  const v = {start:vStart,museum:vMuseum,density:vDensity,study:vStudy,angle:vAngle,draft:vDraft,listen:vListen,guide:vGuide,sync:vSync}[U.tab]||vStart;
+  $("#app").innerHTML = banners()+v();
+  restoreForm(); a11y(); if(typeof updatePill==="function") updatePill();
+}
+function restoreForm(){
+  for(const id in U.form){ const el=document.getElementById(id); if(el && el.type!=="file") el.value=U.form[id]; }
+  const b=U.form.capBoard; if(b){ const r=document.querySelector(`input[name="capBoard"][value="${b==="validated"?"validated":"favorite"}"]`); if(r) r.checked=true; }
+  const w=$("#whyWrap"); if(w) w.style.display=(U.form.capBoard==="validated")?"block":"none";
+}
+function a11y(){
+  document.querySelectorAll("#app input,#app textarea,#app select").forEach(el=>{
+    if(el.getAttribute("aria-label")||el.closest("label")) return;
+    const p=el.previousElementSibling;
+    const name=(p&&p.tagName==="LABEL"&&p.textContent.trim())||el.placeholder||el.title;
+    if(name) el.setAttribute("aria-label",name);
+  });
+}
+// Re-render without stealing the cursor (used when another tab changes data)
+function renderKeep(){
+  const a=document.activeElement; let sel=null, s0=0, s1=0;
+  if(a && a!==document.body && a.closest("#app")){
+    if(a.id) sel="#"+CSS.escape(a.id);
+    else { const at=[...a.attributes].filter(x=>x.name.startsWith("data-")).map(x=>`[${x.name}="${CSS.escape(x.value)}"]`).join(""); if(at) sel=a.tagName.toLowerCase()+at; }
+    try{ s0=a.selectionStart; s1=a.selectionEnd; }catch(_){}
+  }
+  const y=window.scrollY; render(); window.scrollTo(0,y);
+  if(sel){ const n=document.querySelector(sel); if(n){ n.focus({preventScroll:true}); try{ if(s0!=null) n.setSelectionRange(s0,s1); }catch(_){} } }
+}
+
+/* 0. Start */
+function vStart(){
+  const st = stats();
+  const ck = (done,label,auto,key) => key
+    ? `<label class="check"><input type="checkbox" ${done?"checked":""} data-plan="${key}"><div class="${done?"done":""}">${label}</div><div class="auto">${auto||""}</div></label>`
+    : `<div class="check"><input type="checkbox" ${done?"checked":""} disabled aria-label="Ticks itself"><div class="${done?"done":""}">${label}</div><div class="auto">${auto||""}</div></div>`;
+  const w1 = [st.creatorSources>=5, S.plan.phone, st.days>=7];
+  const w2 = [st.studied>=3, st.fullAngles>=7, st.posted>=1];
+  const w3 = [st.posted>=3, st.tracked>=1];
+  const w4 = [st.guides>=1, st.guidesOut>=1, st.larger>=1];
+  const pct = a => Math.round(a.filter(Boolean).length/a.length*100);
+  return `
+  <div class="kicker">Dan Koe's process, step by step</div>
+  <h1>Build a mind that's a magnet for ideas</h1>
+  <p class="lead">This app follows the process in Dan's article in his order. First you build an idea museum and fill it from dense sources (A1–A2). Then you study what's already working and find your angle (B1–B2). Finally you merge a loved idea with a proven one and run his 30-day plan.</p>
+  <div class="quote">"The ultimate moat, or the final competitive edge worth paying for, in my opinion, is an opinion."<small>Ideas "evaporate within a day if you don't capture them". "The habit matters more than the app."</small></div>
+
+  <div class="card">
+    <h2>About you (used to fill in Dan's prompts)</h2>
+    <div class="grid2">
+      <div><label for="setTopics">What do you talk about? [topics]</label><input id="setTopics" data-set="topics" value="${esc(S.settings.topics)}" placeholder="e.g. video ads for small businesses, AI ad creatives, hooks that sell"></div>
+      <div><label for="setThinkers">Thinkers I love (for angle #1)</label><input id="setThinkers" data-set="thinkers" value="${esc(S.settings.thinkers)}" placeholder="e.g. people whose way of thinking shaped you"></div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="card"><h3>Museum</h3><div class="stat">${S.ideas.length}</div><div class="small">${st.fav} favorite · ${st.val} validated</div></div>
+    <div class="card"><h3>Angles</h3><div class="stat">${st.fullAngles}</div><div class="small">ideas with all 5 angles written</div></div>
+    <div class="card"><h3>Posted</h3><div class="stat">${st.posted}</div><div class="small">${st.questions} reader questions saved</div></div>
+  </div>
+
+  <h2>His 30-day plan</h2>
+  <p class="small" style="margin-top:-6px">"You can do this as fast or as slow as you want ... you could do it all in a day." Most checks tick themselves as you use each step. The counts (7 days, 7 ideas) are this app's reading of "a day" over one week, not numbers from the article.</p>
+  <div class="grid2">
+    <div class="card"><h3>Week 1 · Build your museum</h3>
+      ${ck(S.plan.phone,"Set up capture on your phone (open this file on your phone, or export and import your data there)","", "phone")}
+      ${ck(w1[0],`Make your list of 5 creators <a href="#" data-tab="density">→ A2</a>`,`${Math.min(st.creatorSources,5)}/5`)}
+      ${ck(w1[2],`Save one idea a day <a href="#" data-tab="museum">→ A1</a>`,`${st.days}/7 day${st.days===1?"":"s"}`)}
+      <div class="bar"><i style="width:${pct(w1)}%"></i></div></div>
+    <div class="card"><h3>Week 2 · Study & angles</h3>
+      ${ck(w2[0],`Find 3 mid-sized creators and reverse engineer their strategy <a href="#" data-tab="study">→ B1</a>`,`${Math.min(st.studied,3)}/3`)}
+      ${ck(w2[1],`Write 5 angles on one idea a day <a href="#" data-tab="angle">→ B2</a>`,`${st.fullAngles}/7`)}
+      ${ck(w2[2],`Post the best ones <a href="#" data-tab="draft">→ Post</a>`,`${st.posted} posted`)}
+      <div class="bar"><i style="width:${pct(w2)}%"></i></div></div>
+    <div class="card"><h3>Week 3 · Keep posting, listen</h3>
+      ${ck(w3[0],`Keep posting <a href="#" data-tab="draft">→ Post</a>`,`${st.posted} posted`)}
+      ${ck(w3[1],`Pay attention to which posts get the most replies and questions <a href="#" data-tab="listen">→ W3</a>`,`${st.tracked} tracked`)}
+      <div class="bar"><i style="width:${pct(w3)}%"></i></div></div>
+    <div class="card"><h3>Week 4 · First guide</h3>
+      ${ck(w4[0],`Pick one question and make a one-page guide that answers it <a href="#" data-tab="guide">→ W4</a>`,"")}
+      ${ck(w4[1],"Put it out as a free guide to collect emails","")}
+      ${ck(w4[2],"Build a larger version with the product prompt","")}
+      <div class="bar"><i style="width:${pct(w4)}%"></i></div></div>
+  </div>
+  <div class="card">${ck(S.plan.keepGoing,'"Then, keep doing it for the next 12 months."',"","keepGoing")}</div>
+  ${nextBar(null,"museum")}`;
+}
+
+/* A1. Museum */
+function ideaCard(i){
+  const n = anglesDone(i), id=esc(i.id);
+  return `<div class="idea" data-id="${id}">
+    <p>${esc(i.text)}</p>
+    <div class="meta"><span class="pill ${i.board==="favorite"?"fav":"val"}">${i.board==="favorite"?"Favorite":"Validated"}</span><span>${esc(i.type||"")}</span><span>${fmt(i.createdAt)}</span>${n?`<span class="pill ok">${n}/5 angles</span>`:""}${cfx("ideas",i)}</div>
+    ${i.source?`<div class="meta">Source: ${linkify(i.source)}</div>`:""}
+    ${i.why?`<div class="meta">Why it did well: ${esc(i.why)}</div>`:""}
+    ${i.principle?`<div class="meta">Principle to apply: ${esc(i.principle)}</div>`:""}
+    ${U.editIdea===i.id?`<label for="edit_${id}">Edit the idea</label><textarea id="edit_${id}" data-editidea="${id}">${esc(i.text)}</textarea>
+      <div class="row" style="margin-top:8px"><button class="btn s p" data-act="saveEdit" data-id="${id}">Save</button><button class="btn s ghost" data-act="cancelEdit">Cancel</button></div>`:`
+    <div class="row">
+      ${i.board==="favorite"?`<button class="btn s" data-act="toAngle" data-id="${id}">Find angles →</button>`:`<button class="btn s" data-act="pairThis" data-id="${id}">Pair in a post →</button>`}
+      <button class="btn s ghost" data-act="editIdea" data-id="${id}">Edit</button>
+      <button class="btn s ghost" data-act="flip" data-id="${id}">Move to ${i.board==="favorite"?"Validated":"Favorite"}</button>
+      <button class="btn s ghost danger" data-act="delIdea" data-id="${id}">Delete</button>
+    </div>`}</div>`;
+}
+function vMuseum(){
+  const f = (U.filter||"").toLowerCase();
+  const list = S.ideas.filter(i=>!f || (i.text+" "+(i.source||"")+" "+(i.why||"")).toLowerCase().includes(f)).sort((a,b)=>b.createdAt-a.createdAt);
+  const fav = limited(list.filter(i=>i.board==="favorite"),"fav"), val = limited(list.filter(i=>i.board==="validated"),"val");
+  const nf=list.filter(i=>i.board==="favorite").length, nv=list.length-nf;
+  const today = S.ideas.some(i=>dayKey(i.createdAt)===dayKey(Date.now()));
+  return `
+  <div class="kicker">Part A · Step 1</div>
+  <h1>Build an idea museum</h1>
+  <p class="lead">Your swipe file. Jot ideas down as soon as they come to mind, because "the idea that hit you in the shower is gone by lunch if you trust your memory." Don't overcomplicate this.</p>
+  <div class="card ${today?"":"hl"}">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">Capture</h2><span class="small">${today?'<span class="done">✓ Idea saved today</span>':'<span class="warn">Save one idea today</span>'}</span></div>
+    <label for="capText">The idea</label>
+    <textarea id="capText" placeholder="e.g. Most small business ads lose people in the first 2 seconds because they open with the logo"></textarea>
+    <div class="grid2">
+      <div><label for="capType">What is it?</label><select id="capType">${CAPTURE_TYPES.map(t=>`<option>${t}</option>`).join("")}</select></div>
+      <div><label for="capSource">Source or link (optional)</label><input id="capSource" placeholder="Book, post URL, video, conversation..."></div>
+    </div>
+    <label id="boardLab">Which board?</label>
+    <div class="seg" role="radiogroup" aria-labelledby="boardLab">
+      <label><input type="radio" name="capBoard" value="favorite" checked> Favorite Ideas: ideas you love</label>
+      <label><input type="radio" name="capBoard" value="validated"> Validated Ideas: posts that have gone viral</label>
+    </div>
+    <div id="whyWrap" style="display:none"><label for="capWhy">Why did this post do well? (optional)</label><input id="capWhy" placeholder="Hook, format, timing, emotion..."></div>
+    <div class="row" style="margin-top:12px"><button class="btn p" data-act="capture">Save to museum</button><span class="small">Ctrl/⌘ + Enter</span></div>
+  </div>
+  <div class="quote">"When you merge the two together, from your own point of view, that's when you have a great social post."</div>
+  <input placeholder="Search your museum..." aria-label="Search your museum" data-filter value="${esc(U.filter||"")}" style="margin-bottom:14px">
+  <div class="grid2">
+    <div><h3 style="color:var(--fav)">Favorite Ideas · ${nf}</h3>${fav.items.map(ideaCard).join("")||`<div class="empty">${f?"No matches.":"Ideas you love go here."}</div>`}${fav.more}</div>
+    <div><h3 style="color:var(--val)">Validated Ideas · ${nv}</h3>${val.items.map(ideaCard).join("")||`<div class="empty">${f?"No matches.":"Posts that have gone viral go here."}</div>`}${val.more}</div>
+  </div>
+  ${nextBar("start","density")}`;
+}
+
+/* A2. Density */
+function vDensity(){
+  const st = stats();
+  const sel = U.srcCapture;
+  const byKind = k => S.sources.filter(s=>s.kind===k);
+  return `
+  <div class="kicker">Part A · Step 2</div>
+  <h1>Curate ideas based on density</h1>
+  <p class="lead">"If you want ideas nobody else has, you need sources nobody else is reading." High idea density means "books, articles, or accounts where almost every sentence is so good you can't ignore it."</p>
+  <div class="card">
+    <h2>Add an idea-dense source</h2>
+    <div class="grid3">
+      <div><label for="srcName">Name</label><input id="srcName" placeholder="Book title, blog, @handle"></div>
+      <div><label for="srcKind">Type</label><select id="srcKind">${SOURCE_KINDS.map(k=>`<option>${k}</option>`).join("")}</select></div>
+      <div><label for="srcUrl">Link (optional)</label><input id="srcUrl" placeholder="https://..."></div>
+    </div>
+    <label for="srcNote">Why is it dense? (optional)</label><input id="srcNote" placeholder="Almost every sentence is worth thinking about because...">
+    <div class="row" style="margin-top:12px"><button class="btn p" data-act="addSource">Add source</button><span class="small">Week 1 goal: a list of 5 creators. You have <b>${st.creatorSources}</b>.</span></div>
+  </div>
+  <div class="card hl">
+    <h2>Don't know what to write about?</h2>
+    <p class="small" style="margin-top:-4px">Do what Dan does: "I open the list, find something I have an opinion on, and start drafting an idea." Open a source, then tap <b>I have an opinion on this</b>.</p>
+  </div>
+  ${SOURCE_KINDS.map((k,ki)=>{ const L=limited(byKind(k),"src"+ki); return `<h3 style="margin-top:18px">${SOURCE_GROUPS[ki]} · ${byKind(k).length}</h3>${L.items.map(s=>{ const id=esc(s.id); return `
+    <div class="idea">
+      <p><b>${esc(s.name)}</b></p>${s.conflictOf?`<div class="meta">${cfx("sources",s)}</div>`:""}
+      ${s.url?`<div class="meta">${linkify(s.url)}</div>`:""}${s.note?`<div class="meta">${esc(s.note)}</div>`:""}
+      ${sel===s.id?`<label for="opText">What's your opinion on something you found here?</label><textarea id="opText" placeholder="I think... because..."></textarea>
+        <div class="row" style="margin-top:8px"><button class="btn p s" data-act="saveOpinion" data-id="${id}">Save as Favorite idea & find angles →</button><button class="btn s ghost" data-act="cancelOpinion">Cancel</button></div>`
+      :`<div class="row"><button class="btn s" data-act="opinion" data-id="${id}">I have an opinion on this</button><button class="btn s ghost danger" data-act="delSource" data-id="${id}">Remove</button></div>`}
+    </div>`;}).join("")||'<div class="empty">None yet.</div>'}${L.more}`;}).join("")}
+  ${nextBar("museum","study")}`;
+}
+
+/* B1. Study */
+function studyPrompt(){
+  const t = S.settings.topics.trim()||"[topics]";
+  return `I talk about ${t}. Research mid-sized creators who are doing well in those topics, then reverse engineer their strategy from their best posts. Put the posts on a swipe file board, each with a note explaining why that post did well for them. Then, interview me for my own perspective and beliefs so we can start to formulate my own strategy.`;
+}
+function vStudy(){
+  const open = U.swipeFor;
+  const L = limited(S.creators,"cr");
+  return `
+  <div class="kicker">Part B · Step 1 · Writing your first post</div>
+  <h1>Study what's already working</h1>
+  <p class="lead">"Pick 3 creators who aren't celebrities, but aren't nobodies." A celebrity gets millions of views on every post, so "that's not a good judge of 'what works.'" Save a link to their profile.</p>
+  <div class="card">
+    <h2>Mid-sized creators · ${S.creators.length}/3</h2>
+    <div class="grid3">
+      <div><label for="crName">Name or @handle</label><input id="crName" placeholder="@creator"></div>
+      <div><label for="crUrl">Profile URL</label><input id="crUrl" placeholder="https://..."></div>
+      <div><label for="crNote">Why mid-sized? (optional)</label><input id="crNote" placeholder="Not a celebrity, not a nobody"></div>
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn p" data-act="addCreator">Save creator</button></div>
+  </div>
+  ${L.items.map(c=>{
+    const sw = S.ideas.filter(i=>i.creatorId===c.id), id=esc(c.id);
+    return `<div class="card">
+      <div class="row" style="justify-content:space-between"><h2 style="margin:0">${esc(c.name)}</h2><button class="btn s ghost danger" data-act="delCreator" data-id="${id}">Remove</button></div>
+      <div class="meta" style="margin-top:4px">${linkify(c.url)} ${c.note?"· "+esc(c.note):""}${cfx("creators",c)}</div>
+      ${sw.map(i=>`<div class="idea"><p>${esc(i.text)}</p>${i.source?`<div class="meta">${linkify(i.source)}</div>`:""}<div class="meta">Why it did well: ${esc(i.why||"—")}</div><div class="meta">Principle to apply: ${esc(i.principle||"—")}</div></div>`).join("")}
+      ${open===c.id?`<div class="idea hl">
+        <label for="swText">Their best post (paste the text or describe it)</label><textarea id="swText"></textarea>
+        <label for="swUrl">Post link (optional)</label><input id="swUrl">
+        <label for="swWhy">Note: why did this post do well for them?</label><input id="swWhy" placeholder="e.g. Hook calls out the exact person, payoff in the first 3 seconds">
+        <label for="swPrin">The principle I'll take (not the idea)</label><input id="swPrin" placeholder="e.g. Name a specific mistake in the hook">
+        <div class="row" style="margin-top:10px"><button class="btn p s" data-act="saveSwipe" data-id="${id}">Add to swipe file (Validated Ideas)</button><button class="btn s ghost" data-act="cancelSwipe">Cancel</button></div></div>`
+      :`<button class="btn s" data-act="swipe" data-id="${id}">+ Reverse engineer a best post</button>`}
+    </div>`;}).join("")}${L.more}
+  <h3 style="margin-top:20px">Dan's research prompt (paste into any AI tool that can browse)</h3>
+  <div class="prompt"><button class="btn s" data-act="copy" data-prompt="study">Copy</button>${esc(studyPrompt())}</div>
+  <div class="quote" style="margin-top:14px">"You aren't taking the idea. ... you take the principles that make it work and apply it to your own strategy."</div>
+  ${nextBar("density","angle")}`;
+}
+
+/* B2. Angle */
+function anglePrompt(i){
+  const about = [];
+  if(S.settings.topics.trim()) about.push("My topics: "+S.settings.topics.trim());
+  if(S.settings.thinkers.trim()) about.push("Thinkers who shaped me: "+S.settings.thinkers.trim());
+  return `Help me find new angles on a common idea. The angles should come from my thinkers, interests, and life, not generic advice. If you don't know enough about me, ask me first.
+${about.length?"\n"+about.join("\n")+"\n":""}
+The idea: ${i?i.text:"[the common idea]"}
+
+1. Name the universal truth underneath it: the pain or desire my reader already feels.
+
+2. Give me 7 angles, each in 1 or 2 plain sentences, and name the lens for each. At least 2 from thinkers who shaped me, 2 from other fields, 1 from my own life, 1 that redefines the idea, and 1 that disagrees with the common view.
+
+3. Flag the strongest 2 and say why, using relatable, novel, and simple.
+
+Tell me when an angle is weak. Don't write the posts.`;
+}
+function currentAngleIdea(){
+  const c = idea(U.angleIdea); if(c&&c.board==="favorite") return c;
+  let best=null; for(const i of S.ideas) if(i.board==="favorite" && (!best||i.createdAt>best.createdAt)) best=i; return best;
+}
+function vAngle(){
+  const favs = S.ideas.filter(i=>i.board==="favorite").sort((a,b)=>b.createdAt-a.createdAt);
+  const cur = currentAngleIdea();
+  const a = cur ? angleData(cur) : null;
+  const thinker = S.settings.thinkers.split(",")[0].trim();
+  return `
+  <div class="kicker">Part B · Step 2</div>
+  <h1>Find your angle</h1>
+  <p class="lead">"Pick one idea you've saved. One that you love." If you post it the way you found it, it's "probably been said a thousand times. You have to change the perspective." Write 5 angles on the same idea.</p>
+  ${favs.length?`<div class="card"><label for="angleIdea" style="margin-top:0">Pick one idea you love</label>
+    <select id="angleIdea" data-pick="angleIdea">${favs.map(i=>`<option value="${esc(i.id)}" ${cur&&i.id===cur.id?"selected":""}>${esc(i.text.slice(0,90))}${anglesDone(i)?` (${anglesDone(i)}/5)`:""}</option>`).join("")}</select>
+    <p style="margin:12px 0 0;font-size:17px;font-weight:600;white-space:pre-wrap">${esc(cur.text)}</p></div>`
+  :`<div class="empty">Save an idea to your <a href="#" data-tab="museum">Favorite Ideas</a> board first.</div>`}
+  ${cur?`<div class="card">
+    ${ANGLE_QS.map((q,k)=>{
+      const lab = k===0 && thinker ? q.replace("[a thinker I love]", thinker) : q;
+      const r = a.rate[k]||{};
+      return `<div class="q"><div class="n" aria-hidden="true">${k+1}</div><div>
+        <div class="row" style="justify-content:space-between"><label class="lab" for="ang${k}" style="margin:0;color:var(--text);font-size:15px">${esc(lab)}</label><button class="star ${a.stars.includes(k)?"on":""}" data-act="star" data-k="${k}" title="Flag as one of the strongest 2" aria-label="Flag angle ${k+1} as one of the strongest 2" aria-pressed="${a.stars.includes(k)}">★</button></div>
+        <textarea id="ang${k}" data-angle="${k}" placeholder="Write the angle in 1–2 plain sentences">${esc(a.answers[k])}</textarea>
+        <div class="rate">${["relatable","novel","simple"].map(x=>`<label><input type="checkbox" data-rate="${k}" data-x="${x}" ${r[x]?"checked":""}> ${x}</label>`).join("")}</div>
+      </div></div>`;}).join("")}
+    <p class="small">★ Flag your strongest 2, judged on relatable, novel and simple (the test in Dan's prompt). ${a.stars.length}/2 flagged.</p>
+    <div class="row"><button class="btn p" data-act="toDraft" data-id="${esc(cur.id)}" ${a.answers.some(x=>x.trim())?"":"disabled"}>Merge with a validated idea & draft →</button></div>
+  </div>
+  <details><summary>Dan's example: "constraints make you more creative"</summary>
+    <p>When you disagree with it, you have something new: "constraints don't make you creative, they make you decisive, because the blank page is a decision problem disguised as an inspiration problem. Now you're posting something only you would have said, and you can say it eleven ways this month without repeating yourself."</p></details>
+  <h3>Want help finding angles? Dan's prompt, filled in with this idea</h3>
+  <p class="small" style="margin-top:-2px">The "My topics" and "Thinkers who shaped me" lines are added by this app from your Start page (Dan's prompt says "If you don't know enough about me, ask me first"). Everything else is his wording.</p>
+  <div class="prompt"><button class="btn s" data-act="copy" data-prompt="angle">Copy</button>${esc(anglePrompt(cur))}</div>
+  <label for="angExtra">Paste useful angles from your AI tool here (optional)</label>
+  <textarea id="angExtra" data-extra placeholder="Universal truth, extra angles, the strongest 2 and why...">${esc(a.extra)}</textarea>`:""}
+  ${nextBar("study","draft")}`;
+}
+
+/* Merge & post */
+function draftIdea(){ const favs=S.ideas.filter(i=>i.board==="favorite"); const c=idea(U.draftIdea); return (c&&c.board==="favorite")?c:(favs.find(i=>anglesDone(i))||favs[0]); }
+function vDraft(){
+  const favs = S.ideas.filter(i=>i.board==="favorite");
+  const vals = S.ideas.filter(i=>i.board==="validated");
+  const f = draftIdea();
+  const v = idea(U.draftValidated);
+  const a = f ? angleData(f) : null;
+  const order = a ? [...a.stars, ...[0,1,2,3,4].filter(k=>!a.stars.includes(k))].filter(k=>a.answers[k].trim()) : [];
+  const ak = U.draftAngle!=="" && order.includes(+U.draftAngle) ? +U.draftAngle : order[0];
+  const posts = limited([...S.posts].sort((x,y)=>(y.postedAt||y.createdAt)-(x.postedAt||x.createdAt)),"posts");
+  return `
+  <div class="kicker">Pairing two kinds of ideas</div>
+  <h1>Merge & post</h1>
+  <p class="lead">"Your best content will come from pairing two kinds of ideas": the ones you love (your museum, books and life) and the ones "already proven to work (posts that did far better than usual)", told "from your own point of view."</p>
+  <div class="grid2">
+    <div class="card"><h3 style="color:var(--fav)">An idea you love + your angle</h3>
+      ${favs.length?`<select data-pick="draftIdea" aria-label="An idea you love">${favs.map(i=>`<option value="${esc(i.id)}" ${f&&i.id===f.id?"selected":""}>${esc(i.text.slice(0,80))}</option>`).join("")}</select>
+      ${order.length?`<label for="draftAngle">Your angle (strongest first)</label><select id="draftAngle" data-pick="draftAngle">${order.map(k=>`<option value="${k}" ${k===ak?"selected":""}>${a.stars.includes(k)?"★ ":""}${k+1}. ${esc(a.answers[k].slice(0,90))}</option>`).join("")}</select>`
+      :`<p class="small">No angles yet. <a href="#" data-act="toAngle" data-id="${esc(f.id)}">Write 5 angles →</a></p>`}`
+      :`<div class="empty">Add a Favorite idea in the <a href="#" data-tab="museum">museum</a>.</div>`}
+    </div>
+    <div class="card"><h3 style="color:var(--val)">A proven idea</h3>
+      ${vals.length?`<select data-pick="draftValidated" aria-label="A proven idea"><option value="">Choose a Validated idea...</option>${vals.map(i=>`<option value="${esc(i.id)}" ${v&&i.id===v.id?"selected":""}>${esc(i.text.slice(0,80))}</option>`).join("")}</select>
+      ${v?`<div class="meta" style="margin-top:8px">Why it did well: ${esc(v.why||"—")}</div><div class="meta">Principle to apply: ${esc(v.principle||"—")}</div>`:""}`
+      :`<div class="empty">Add viral posts to <a href="#" data-tab="museum">Validated Ideas</a> or your <a href="#" data-tab="study">swipe file</a>.</div>`}
+    </div>
+  </div>
+  ${f?`<div class="card">
+    <h2>Write the post in your words</h2>
+    ${order.length?`<div class="quote" style="margin-bottom:10px">${esc(a.answers[ak])}</div>`:""}
+    <div class="grid2"><div><label for="drPlat">Where will you post it?</label><select id="drPlat">${PLATFORMS.map(p=>`<option>${p}</option>`).join("")}</select></div><div></div></div>
+    <label for="drText">Post / script</label>
+    <textarea id="drText" style="min-height:160px" placeholder="Open with your angle, borrow the principle from the proven post, and say it the way only you would."></textarea>
+    <div class="row" style="margin-top:10px"><button class="btn p" data-act="saveDraft">Save draft</button></div>
+  </div>`:""}
+  <h2 style="margin-top:22px">Drafts & posts · ${S.posts.length}</h2>
+  ${posts.items.map(p=>{const fi=idea(p.ideaId), id=esc(p.id);return `<div class="idea">
+    <div class="meta"><span class="pill ${p.status==="posted"?"ok":""}">${p.status==="posted"?"Posted "+fmt(p.postedAt):"Draft"}</span><span>${esc(p.platform)}</span>${fi?`<span>from: ${esc(fi.text.slice(0,50))}</span>`:""}${cfx("posts",p)}</div>
+    <textarea data-post="${id}" data-field="text" aria-label="Post text">${esc(p.text)}</textarea>
+    ${p.status==="posted"?`<label for="link_${id}">Link to the live post (optional)</label><input id="link_${id}" data-post="${id}" data-field="link" value="${esc(p.link||"")}">`:""}
+    <div class="row" style="margin-top:8px">${p.status!=="posted"?`<button class="btn s p" data-act="markPosted" data-id="${id}">Mark as posted</button>`:`<button class="btn s" data-tab="listen">Track replies →</button><button class="btn s ghost" data-act="unpost" data-id="${id}">Back to draft</button>`}<button class="btn s ghost danger" data-act="delPost" data-id="${id}">Delete</button></div>
+  </div>`;}).join("")||'<div class="empty">No drafts yet.</div>'}${posts.more}
+  ${nextBar("angle","listen")}`;
+}
+
+/* W3 listen */
+function vListen(){
+  const all = S.posts.filter(p=>p.status==="posted").sort((a,b)=>((+b.replies||0)+(b.questions||[]).length)-((+a.replies||0)+(a.questions||[]).length));
+  const top = all[0]; const L=limited(all,"listen");
+  return `
+  <div class="kicker">Week 3</div>
+  <h1>Keep posting. Watch the replies and questions.</h1>
+  <p class="lead">"Keep posting and pay attention to which posts get the most replies and questions." The posts that get the most rise to the top, and the questions people ask feed Week 4.</p>
+  ${L.items.map(p=>{ const id=esc(p.id); return `<div class="idea ${p===top&&((+p.replies||0)+(p.questions||[]).length)>0?"hl":""}">
+    <div class="meta"><span class="pill ok">${esc(p.platform)}</span><span>Posted ${fmt(p.postedAt)}</span>${p.link?linkify(p.link):""}</div>
+    <p>${esc(p.text.slice(0,220))}${p.text.length>220?"…":""}</p>
+    <div class="grid2"><div><label for="rep_${id}">Replies</label><input id="rep_${id}" type="number" min="0" inputmode="numeric" data-post="${id}" data-field="replies" value="${esc(p.replies||0)}"></div><div></div></div>
+    <label>Questions people asked</label>
+    ${(p.questions||[]).map(q=>`<div class="row" style="margin:4px 0"><span style="flex:1">❓ ${esc(q.text)}</span><button class="btn s" data-act="useQ" data-id="${id}" data-q="${esc(q.id)}">Make a guide →</button><button class="btn s ghost danger" data-act="delQ" data-id="${id}" data-q="${esc(q.id)}" aria-label="Delete question">×</button></div>`).join("")}
+    <div class="row" style="margin-top:6px"><input id="q_${id}" placeholder="Paste a question from the comments" aria-label="Paste a question from the comments" style="flex:1"><button class="btn s" data-act="addQ" data-id="${id}">Add</button></div>
+  </div>`;}).join("")||`<div class="empty">Mark a draft as posted on <a href="#" data-tab="draft">Merge & post</a> first.</div>`}${L.more}
+  ${nextBar("draft","guide")}`;
+}
+
+/* W4 guide */
+function vGuide(){
+  const qs = []; S.posts.forEach(p=>(p.questions||[]).forEach(q=>qs.push({p,q})));
+  const guides=[...S.guides].sort((a,b)=>b.createdAt-a.createdAt);
+  const gc=(g,f,t)=>`<label class="check"><input type="checkbox" data-gcheck="${esc(g.id)}" data-field="${f}" ${g[f]?"checked":""}><div>${t}</div></label>`;
+  return `
+  <div class="kicker">Week 4</div>
+  <h1>Pick one question. Make a one-page guide.</h1>
+  <p class="lead">"Pick one question, make a one-page guide that answers it, and put it out as a free guide to collect emails, then build a larger version with the product prompt."</p>
+  <div class="quote">"The products that do the best are based on what people are already signalling that they want + a problem you've solved in your own life."</div>
+  <div class="card">
+    <label for="gQ" style="margin-top:0">Pick one question</label>
+    <select id="gQ" data-pick="guideQ"><option value="">Choose from the questions you saved...</option>${qs.map(({p,q})=>`<option value="${esc(p.id+"|"+q.id)}" ${U.guideQ===p.id+"|"+q.id?"selected":""}>${esc(q.text)}</option>`).join("")}</select>
+    <label for="gQText">...or type it</label><input id="gQText" placeholder="The question you'll answer">
+    <div class="row" style="margin-top:10px"><button class="btn p" data-act="newGuide">Start the one-page guide</button></div>
+  </div>
+  ${guides.map(g=>{ const id=esc(g.id); return `<div class="card">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">❓ ${esc(g.question)}</h2><button class="btn s ghost danger" data-act="delGuide" data-id="${id}">Delete</button></div>
+    ${g.conflictOf?`<div class="meta">${cfx("guides",g)}</div>`:""}
+    <label for="gt_${id}">Guide title</label><input id="gt_${id}" data-guide="${id}" data-field="title" value="${esc(g.title)}">
+    <label for="gb_${id}">The one page that answers it</label><textarea id="gb_${id}" data-guide="${id}" data-field="body" style="min-height:180px">${esc(g.body)}</textarea>
+    <label for="ge_${id}">Where people get it in exchange for their email (link)</label><input id="ge_${id}" data-guide="${id}" data-field="emailLink" value="${esc(g.emailLink)}">
+    <div style="margin-top:10px">
+      ${gc(g,"made","Made the one-page guide")}
+      ${gc(g,"out","Put it out as a free guide to collect emails")}
+      ${gc(g,"larger","Built a larger version with the product prompt")}
+      <p class="small">Dan links the product prompt from <a href="${ARTICLE}" target="_blank" rel="noopener">the article</a>. It isn't printed there, so it isn't copied here.</p>
+    </div></div>`;}).join("")}
+  <div class="card"><b>Then keep doing it for the next 12 months.</b> <span class="small">"The artisan builds a body of work, one idea and one project at a time, and lets social media pay for it."</span></div>
+  ${nextBar("listen",null)}`;
+}
+
+/* ---------- sync with a private GitHub repository ----------
+   This device's localStorage is always the source of truth. Sync pulls the data file from the repo,
+   merges it with the local copy (same merge as between tabs: nothing is silently dropped), and pushes
+   the result back using GitHub's sha check so two devices can't overwrite each other.
+   The token lives only in this browser (SYNCKEY). It is never exported and never written to the repo. */
+const SYNCKEY = KEY+".sync";
+const API = "https://api.github.com";
+const FILE = "idea-catcher-data.json";
+const DEFAULT_OWNER = "pexreyes", DEFAULT_REPO = "idea-catcher-data";   // Pex's repos; editable in the form
+let SY = readSync();
+const syncState = {state:"off", msg:"", gen:0, running:false, again:false, blocked:false, retryTimer:0, debounce:0, backoff:0, applying:false, connectMsg:"", connectBusy:false, qr:false, warn:""};
+function readSync(){ try{ const o=JSON.parse(localStorage.getItem(SYNCKEY)||"null"); if(isObj(o)) return o; }catch(_){} return {}; }
+function writeSync(){ try{ localStorage.setItem(SYNCKEY, JSON.stringify(SY)); }catch(_){} }
+const connected = () => !!(SY.token && SY.owner && SY.repo);
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+const hm = t => new Date(t).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});
+function b64enc(str){ const b=new TextEncoder().encode(str); let s=""; for(let i=0;i<b.length;i+=0x8000) s+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000)); return btoa(s); }
+function b64dec(b64){ const s=atob(String(b64).replace(/\s/g,"")); const b=new Uint8Array(s.length); for(let i=0;i<s.length;i++) b[i]=s.charCodeAt(i); return new TextDecoder().decode(b); }
+const b64url = s => b64enc(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const b64urlDec = s => b64dec(s.replace(/-/g,"+").replace(/_/g,"/"));
+function deviceName(){ const u=navigator.userAgent; return /Android/i.test(u)?"Android phone":/iPhone|iPad/i.test(u)?"iPhone/iPad":/Macintosh|Mac OS/i.test(u)?"Mac":/Windows/i.test(u)?"PC":"a browser"; }
+class SyncErr extends Error{ constructor(kind,msg,extra){ super(msg); this.kind=kind; Object.assign(this,extra||{}); } }
+const repoPath = c => `/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}`;
+
+async function gh(method, p, body, cfg){
+  let res;
+  try{
+    res = await fetch(API+p, {method, cache:"no-store", headers:Object.assign({"Authorization":"Bearer "+cfg.token, "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28"}, body?{"Content-Type":"application/json"}:{}), body:body?JSON.stringify(body):undefined});
+  }catch(e){ throw new SyncErr(navigator.onLine===false?"offline":"network", "Can't reach GitHub right now."); }
+  let json=null; try{ json=await res.json(); }catch(_){}
+  if(res.ok) return {status:res.status, json:json||{}};
+  const h=k=>res.headers.get(k), remaining=h("x-ratelimit-remaining"), reset=+h("x-ratelimit-reset")||0, ra=+h("retry-after")||0;
+  if(res.status===429 || (res.status===403 && (remaining==="0" || ra))){
+    const wait = ra ? ra*1000 : reset ? Math.max(1000, reset*1000-Date.now()) : 60000;
+    throw new SyncErr("rate", `GitHub asked to slow down. Your changes are safe on this device and will sync at ${hm(Date.now()+wait)}.`, {wait});
+  }
+  if(res.status===401) throw new SyncErr("auth", "GitHub didn't accept the token. It has probably expired or was deleted. Make a new token (see SETUP.md) and paste it under \"Replace token\" below. Your ideas on this device are safe.");
+  if(res.status===403) throw new SyncErr("forbidden", `This token isn't allowed to change ${cfg.owner}/${cfg.repo}. When you create the token, pick this repository and set "Contents" to "Read and write". Your ideas on this device are safe.`);
+  if(res.status===404) throw new SyncErr("notfound", `Can't find the repository ${cfg.owner}/${cfg.repo} with this token. Check the spelling, and that the token was given access to this repository.`);
+  if(res.status===409 || res.status===422) throw new SyncErr("stale", "Another device saved at the same moment.");
+  throw new SyncErr("server", `GitHub had a problem (error ${res.status}). Trying again shortly.`);
+}
+async function readRemote(cfg){
+  let r;
+  try{ r = await gh("GET", repoPath(cfg)+"/contents/"+FILE, null, cfg); }
+  catch(e){ if(e.kind!=="notfound") throw e; await gh("GET", repoPath(cfg), null, cfg); return null; }  // repo exists, file not yet: first sync creates it
+  let content = r.json.content;
+  if(!content && r.json.sha){ const b = await gh("GET", repoPath(cfg)+"/git/blobs/"+encodeURIComponent(r.json.sha), null, cfg); content = b.json.content; } // files over 1 MB
+  let n=null; try{ n=normalize(JSON.parse(b64dec(content||""))); }catch(_){}
+  if(!n) throw new SyncErr("damaged", `The data file (${FILE}) in ${cfg.owner}/${cfg.repo} can't be read, so it was left untouched. Your ideas on this device are safe. You can restore an older version of that file on github.com (History).`);
+  return {sha:r.json.sha, data:n.data};
+}
+async function writeRemote(cfg, sha, data){
+  const body = {message:`Idea Catcher sync from ${deviceName()}`, content:b64enc(JSON.stringify(data))};
+  if(sha) body.sha = sha;
+  const r = await gh("PUT", repoPath(cfg)+"/contents/"+FILE, body, cfg);
+  return r.json.content && r.json.content.sha;
+}
+function setSync(state, msg){ syncState.state=state; syncState.msg=msg||""; updatePill(); if(U.tab==="sync") renderKeep(); }
+function updatePill(){
+  const b=$("#syncPill"); if(!b) return;
+  const st = connected() ? syncState.state : "off";
+  const label = {off:"Sync: off", idle:"Sync", syncing:"Syncing…", ok:"Synced", offline:"Offline", error:"Sync error"}[st] || "Sync";
+  const dot = {ok:"var(--good)", syncing:"var(--accent2)", offline:"var(--muted)", error:"var(--bad)"}[st] || "var(--muted)";
+  b.innerHTML = `<span class="dot" style="background:${dot}" aria-hidden="true"></span>${label}`;
+  b.dataset.syncState = st; b.dataset.syncGen = syncState.gen;
+  b.title = connected() ? (st==="ok"&&SY.lastSync ? "Last synced "+hm(SY.lastSync) : syncState.msg || label) : "Set up sync between your devices";
+  b.setAttribute("aria-label", "Sync status: "+label+(SY.lastSync&&connected()?", last synced "+hm(SY.lastSync):""));
+}
+function scheduleRetry(ms){ clearTimeout(syncState.retryTimer); syncState.retryTimer=setTimeout(()=>runSync("retry"), ms); }
+function scheduleSync(){ if(!connected() || syncState.applying) return; clearTimeout(syncState.debounce); syncState.debounce=setTimeout(()=>runSync("edit"), 2500); }
+async function runSync(reason){
+  if(!connected()) return;
+  if(syncState.blocked && reason!=="manual" && reason!=="connect") return;   // needs the user to fix the token/repo
+  if(syncState.running){ syncState.again=true; return; }
+  clearTimeout(syncState.debounce); clearTimeout(syncState.retryTimer);
+  if(navigator.onLine===false){ setSync("offline","No internet connection. Your changes are saved on this device and will sync when you're back online."); return; }
+  syncState.running=true; setSync("syncing");
+  const work = async () => {
+    for(let attempt=0;;attempt++){
+      const cfg = {owner:SY.owner, repo:SY.repo, token:SY.token};
+      try{
+        flush();
+        const remote = await readRemote(cfg);
+        if(SY.token!==cfg.token) return;                    // disconnected or changed while we waited
+        if(remote){
+          stampAll(S); const before=stable(S);
+          S = merge2(S, remote.data);
+          if(stable(S)!==before){ syncState.applying=true; save(); syncState.applying=false; renderKeep(); }
+        }
+        stampAll(S);
+        if(!remote || stable(S)!==stable(remote.data)){
+          const sha = await writeRemote(cfg, remote && remote.sha, S);
+          if(SY.token===cfg.token){ SY.sha = sha; }
+        }
+        if(SY.token!==cfg.token) return;
+        SY.lastSync = Date.now(); writeSync();
+        syncState.backoff=0; syncState.blocked=false; setSync("ok");
+        return;
+      }catch(e){
+        if(SY.token!==cfg.token) return;
+        const retriable = e.kind==="stale" || e.kind==="server" || e.kind==="network";
+        if(retriable && attempt<5){ await sleep(Math.min(8000, 400*Math.pow(2,attempt))*(0.6+Math.random()*0.8)); continue; }
+        syncErr(e); return;
+      }
+    }
+  };
+  try{ if(navigator.locks && navigator.locks.request) await navigator.locks.request("idea-catcher-sync", work); else await work(); }
+  catch(e){ syncErr(e instanceof SyncErr ? e : new SyncErr("server","Sync stopped unexpectedly. Trying again shortly.")); }
+  finally{
+    syncState.running=false; syncState.gen++; updatePill(); if(U.tab==="sync") renderKeep();
+    if(syncState.again){ syncState.again=false; setTimeout(()=>runSync("again"), 50); }
+  }
+}
+function syncErr(e){
+  const next = () => { syncState.backoff = Math.min(300000, syncState.backoff ? syncState.backoff*2 : 5000); return syncState.backoff; };
+  if(e.kind==="offline" || e.kind==="network"){ setSync("offline", "Can't reach GitHub. Your changes are saved on this device and will sync when the connection is back."); scheduleRetry(next()); }
+  else if(e.kind==="rate"){ setSync("error", e.message); scheduleRetry(e.wait); }
+  else if(e.kind==="server" || e.kind==="stale"){ setSync("error", e.kind==="stale" ? "Several devices kept saving at the same moment. Trying again shortly." : e.message); scheduleRetry(next()); }
+  else { syncState.blocked=true; setSync("error", e.message); }   // auth / forbidden / notfound / damaged: wait for the user
+}
+function parseRepo(owner, repo){
+  owner=String(owner||"").trim(); repo=String(repo||"").trim();
+  const m = repo.match(/github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:[\/?#].*)?$/i) || repo.match(/^([\w.-]+)\/([\w.-]+)$/);
+  if(m){ owner=m[1]; repo=m[2]; }
+  return {owner, repo};
+}
+async function connectSync(cfg){
+  const {owner, repo} = parseRepo(cfg.owner, cfg.repo); const token=String(cfg.token||"").trim();
+  if(!/^[\w.-]{1,100}$/.test(owner) || !/^[\w.-]{1,100}$/.test(repo)) { syncState.connectMsg="Enter your GitHub username and the data repository name (for example idea-catcher-data)."; return renderKeep(); }
+  if(token.length<20 || /\s/.test(token)) { syncState.connectMsg="Paste the whole token. It starts with github_pat_."; return renderKeep(); }
+  if(navigator.onLine===false){ syncState.connectMsg="You're offline. Connect when you have internet."; return renderKeep(); }
+  syncState.connectBusy=true; syncState.connectMsg="Checking with GitHub…"; renderKeep();
+  try{
+    const r = await gh("GET", repoPath({owner,repo}), null, {owner,repo,token});
+    syncState.warn = r.json && r.json.private===false ? `Warning: ${owner}/${repo} is public, so anyone can read your ideas. On github.com open the repo → Settings → scroll down → Change visibility → Private.` : "";
+    SY = {owner, repo, token, connectedAt:Date.now()}; writeSync();
+    syncState.connectMsg=""; syncState.blocked=false; syncState.backoff=0; syncState.connectBusy=false;
+    toast(`Connected to ${owner}/${repo}`);
+    await runSync("connect");
+  }catch(e){
+    syncState.connectBusy=false;
+    syncState.connectMsg = e.kind==="offline"||e.kind==="network" ? "Can't reach GitHub. Check your internet connection and try again." : e.message;
+    renderKeep();
+  }
+}
+function disconnectSync(){
+  clearTimeout(syncState.retryTimer); clearTimeout(syncState.debounce);
+  SY = {owner:SY.owner, repo:SY.repo}; writeSync();   // token removed; repo name kept only to pre-fill the form
+  syncState.qr=false; syncState.blocked=false; setSync("off");
+  toast("Disconnected. Your ideas stay on this device.");
+}
+function connectLink(){ return location.href.split("#")[0].split("?")[0] + "#connect=" + b64url(JSON.stringify({v:1, o:SY.owner, r:SY.repo, t:SY.token})); }
+function takeConnectFragment(){
+  if(!/^#connect=/.test(location.hash)) return null;
+  const raw = location.hash.slice(9);
+  history.replaceState(null, "", location.href.split("#")[0]);   // the token never stays in the address bar or history entry
+  try{ const o=JSON.parse(b64urlDec(raw)); if(o && o.o && o.r && o.t) return {owner:o.o, repo:o.r, token:o.t}; }catch(_){}
+  notice = "That connect link is broken or incomplete. On your other device open Sync → Connect another device and scan the code again.";
+  return null;
+}
+function qrSvg(text){
+  try{ const q=qrcode(0,"L"); q.addData(text); q.make(); return q.createSvgTag({cellSize:4, margin:16, scalable:true, alt:"QR code that connects another device to your sync"}); }
+  catch(_){ return '<p class="small">This link is too long for a QR code. Use Copy link instead.</p>'; }
+}
+function vSync(){
+  const on = connected(), st = syncState.state;
+  const stateText = !on ? "Not connected" : ({idle:"Waiting to sync", syncing:"Syncing…", ok:"Synced", offline:"Offline", error:"Needs attention"}[st]||"Waiting to sync");
+  return `
+  <div class="kicker">Sync</div>
+  <h1>Sync your ideas across devices</h1>
+  <p class="lead">Your ideas are always saved on this device first, so the app works without internet. Sync copies them to a private GitHub repository that you own, so your phone, Mac and PC stay in step. If two devices change the same idea, you keep both versions.</p>
+  <div class="card" id="syncStatus" role="status">
+    <h2 style="margin:0 0 6px">${esc(stateText)}</h2>
+    ${on?`<div class="small">Connected to <b>${esc(SY.owner)}/${esc(SY.repo)}</b>${SY.lastSync?` · last synced ${esc(hm(SY.lastSync))}, ${esc(fmt(SY.lastSync))}`:""}</div>`:""}
+    ${on&&syncState.msg?`<p class="${st==="error"?"warn":"small"}" style="margin:8px 0 0">${esc(syncState.msg)}</p>`:""}
+    ${on&&syncState.warn?`<p class="warn" style="margin:8px 0 0">${esc(syncState.warn)}</p>`:""}
+  </div>
+  ${on?`
+  <div class="row" style="margin-bottom:14px">
+    <button class="btn p" data-act="syncNow" ${syncState.running?"disabled":""}>Sync now</button>
+    <button class="btn" data-act="showQr">Connect another device</button>
+    <button class="btn ghost danger" data-act="disconnect">Disconnect</button>
+  </div>
+  ${syncState.qr?`<div class="card hl" id="qrCard">
+    <h2>Connect your phone or another computer</h2>
+    <p class="small" style="margin-top:-4px">On the other device, scan this with the camera, or open the link. It connects by itself.</p>
+    <div class="qr" id="qrBox">${qrSvg(connectLink())}</div>
+    <p class="warn"><b>Treat this code and link like a password.</b> Anyone who has them can read and change your ideas. Don't post or forward them, and close this box when you're done.</p>
+    <label for="qrLink">Connect link</label><input id="qrLink" readonly value="${esc(connectLink())}">
+    <div class="row" style="margin-top:8px"><button class="btn s" data-act="copyLink">Copy link</button><button class="btn s ghost" data-act="hideQr">Hide</button></div>
+  </div>`:""}
+  <details><summary>Replace token (when it expires)</summary>
+    <label for="syNewToken">New token</label><input id="syNewToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_...">
+    <div class="row" style="margin-top:8px"><button class="btn s p" data-act="replaceToken">Save new token</button></div>
+  </details>`:`
+  <div class="card">
+    <h2>Connect (once per device)</h2>
+    <p class="small" style="margin-top:-4px">Already connected on another device? Open Sync there, tap <b>Connect another device</b>, and scan the code with this device instead.</p>
+    <div class="grid2">
+      <div><label for="syOwner">Your GitHub username</label><input id="syOwner" autocomplete="off" spellcheck="false" autocapitalize="none" value="${esc(SY.owner||DEFAULT_OWNER)}" placeholder="pexreyes"></div>
+      <div><label for="syRepo">Data repository name</label><input id="syRepo" autocomplete="off" spellcheck="false" autocapitalize="none" value="${esc(SY.repo||DEFAULT_REPO)}" placeholder="idea-catcher-data"></div>
+    </div>
+    <label for="syToken">Token</label><input id="syToken" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_...">
+    ${syncState.connectMsg?`<p class="warn" role="alert">${esc(syncState.connectMsg)}</p>`:""}
+    <div class="row" style="margin-top:12px"><button class="btn p" data-act="connect" ${syncState.connectBusy?"disabled":""}>Connect</button><span class="small">The token stays on this device only. It's never put in exports or in the repo.</span></div>
+  </div>`}
+  <div class="next"><button class="btn ghost" data-tab="start">← Back to Start</button></div>`;
+}
+// triggers
+addEventListener("online", ()=>runSync("online"));
+addEventListener("offline", ()=>{ if(connected()) setSync("offline","No internet connection. Your changes are saved on this device and will sync when you're back online."); });
+addEventListener("focus", ()=>runSync("focus"));
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible") runSync("visible"); });
+setInterval(()=>{ if(document.visibilityState==="visible") runSync("interval"); }, 60000);
+addEventListener("storage", e=>{ if(e.key===SYNCKEY){ SY=readSync(); if(!connected()) syncState.state="off"; updatePill(); if(U.tab==="sync") renderKeep(); } });
+addEventListener("hashchange", ()=>{ const c=takeConnectFragment(); if(c){ U.tab="sync"; saveUi(); render(); connectSync(c); } else if(notice) render(); });
+
+/* ---------- events ---------- */
+const isFormId = id => FORM.has(id) || /^(q_|edit_)/.test(id);
+function clearForm(...ids){ ids.forEach(k=>delete U.form[k]); }
+function removeWithUndo(col, id, label, after, undoAfter){
+  const arr=S[col], idx=arr.findIndex(x=>x.id===id); if(idx<0) return;
+  const item=arr[idx]; stamp(item); arr.splice(idx,1);
+  S.deleted[id]={at:Date.now(), h:item._h};
+  const extra = after ? after(item) : null;
+  save(); render();
+  toast(label+" deleted", ()=>{
+    delete S.deleted[id]; item.restoredAt=Date.now();   // a restore counts as a new edit, so no other copy re-deletes it
+    if(!S[col].some(x=>x.id===id)) S[col].push(item);
+    if(undoAfter) undoAfter(item, extra);
+    save(); render(); toast(label+" restored");
+  });
+}
+document.addEventListener("click", e=>{
+  const t = e.target.closest("[data-tab],[data-act]");
+  if(!t) return;
+  if(t.tagName==="A") e.preventDefault();
+  if(e.detail>1) return;   // ignore the 2nd click of a double-click: no duplicate saves
+  if(t.disabled) return;
+  if(t.dataset.tab){ e.preventDefault(); go(t.dataset.tab); return; }
+  const act = t.dataset.act, id = t.dataset.id;
+  const A = {
+    capture(){
+      const text = $("#capText").value.trim(); if(!text){ $("#capText").focus(); return toast("Write the idea first"); }
+      const chk=document.querySelector('input[name="capBoard"]:checked'); const board = chk?chk.value:"favorite";
+      S.ideas.push({id:uid(),text,type:$("#capType").value,board,source:$("#capSource").value.trim(),why:board==="validated"?$("#capWhy").value.trim():"",createdAt:Date.now()});
+      clearForm("capText","capSource","capWhy");
+      save(); render(); toast("Saved to "+(board==="favorite"?"Favorite":"Validated")+" Ideas"); $("#capText").focus();
+    },
+    flip(){ const i=idea(id); if(!i) return; i.board=i.board==="favorite"?"validated":"favorite"; save(); render(); },
+    editIdea(){ U.editIdea=id; render(); const n=document.getElementById("edit_"+id); if(n) n.focus(); },
+    cancelEdit(){ clearForm("edit_"+U.editIdea); U.editIdea=""; saveUi(); render(); },
+    saveEdit(){ const i=idea(id), n=document.getElementById("edit_"+id); if(!i||!n) return; const v=n.value.trim(); if(!v) return toast("An idea can't be empty. Use Delete instead.");
+      i.text=v; clearForm("edit_"+id); U.editIdea=""; save(); render(); toast("Idea updated"); },
+    delIdea(){ removeWithUndo("ideas", id, "Idea"); },
+    toAngle(){ U.angleIdea=id; go("angle"); },
+    pairThis(){ U.draftValidated=id; go("draft"); },
+    addSource(){
+      const name=$("#srcName").value.trim(); if(!name) return toast("Name the source");
+      S.sources.push({id:uid(),name,kind:$("#srcKind").value,url:$("#srcUrl").value.trim(),note:$("#srcNote").value.trim(),createdAt:Date.now()});
+      clearForm("srcName","srcUrl","srcNote"); save(); render(); toast("Source added");
+    },
+    delSource(){ removeWithUndo("sources", id, "Source"); },
+    opinion(){ U.srcCapture=id; render(); setTimeout(()=>$("#opText")&&$("#opText").focus(),0); },
+    cancelOpinion(){ U.srcCapture=""; clearForm("opText"); saveUi(); render(); },
+    saveOpinion(){
+      const text=$("#opText").value.trim(); if(!text) return toast("Write your opinion first");
+      const s=S.sources.find(x=>x.id===id); const nid=uid();
+      S.ideas.push({id:nid,text,type:"Anything else",board:"favorite",source:s?(s.url||s.name):"",createdAt:Date.now()});
+      U.srcCapture=""; U.angleIdea=nid; clearForm("opText"); save(); go("angle"); toast("Saved. Now find your angle");
+    },
+    addCreator(){
+      const name=$("#crName").value.trim(); if(!name) return toast("Add the creator's name");
+      S.creators.push({id:uid(),name,url:$("#crUrl").value.trim(),note:$("#crNote").value.trim(),createdAt:Date.now()});
+      clearForm("crName","crUrl","crNote"); save(); render(); toast("Creator saved");
+    },
+    delCreator(){ removeWithUndo("creators", id, "Creator",
+      c=>{ const linked=S.ideas.filter(i=>i.creatorId===c.id).map(i=>i.id); S.ideas.forEach(i=>{ if(i.creatorId===c.id) i.creatorId=""; }); return linked; },
+      (c,linked)=>{ (linked||[]).forEach(iid=>{ const i=idea(iid); if(i&&!i.creatorId) i.creatorId=c.id; }); }); },
+    swipe(){ U.swipeFor=id; render(); },
+    cancelSwipe(){ U.swipeFor=""; clearForm("swText","swUrl","swWhy","swPrin"); saveUi(); render(); },
+    saveSwipe(){
+      const text=$("#swText").value.trim(); if(!text) return toast("Paste or describe the post");
+      S.ideas.push({id:uid(),text,type:"Social post that inspired me",board:"validated",source:$("#swUrl").value.trim(),why:$("#swWhy").value.trim(),principle:$("#swPrin").value.trim(),creatorId:id,createdAt:Date.now()});
+      U.swipeFor=""; clearForm("swText","swUrl","swWhy","swPrin"); save(); render(); toast("Added to swipe file");
+    },
+    copy(){ copy(t.dataset.prompt==="study"?studyPrompt():anglePrompt(currentAngleIdea())); },
+    star(){
+      const cur = currentAngleIdea(); if(!cur) return; const a=angleData(cur); const k=+t.dataset.k;
+      if(a.stars.includes(k)) a.stars=a.stars.filter(x=>x!==k); else { a.stars.push(k); if(a.stars.length>2) a.stars.shift(); }
+      save(); renderKeep();
+    },
+    toDraft(){ U.draftIdea=id; U.draftAngle=""; go("draft"); },
+    saveDraft(){
+      const text=$("#drText").value.trim(); if(!text) return toast("Write the post first");
+      const f=draftIdea();
+      const angSel=document.querySelector('[data-pick="draftAngle"]');
+      S.posts.push({id:uid(),ideaId:f?f.id:"",validatedId:U.draftValidated||"",angleIdx:angSel?+angSel.value:null,platform:$("#drPlat").value,text,status:"draft",createdAt:Date.now(),replies:0,questions:[]});
+      clearForm("drText"); save(); render(); toast("Draft saved");
+    },
+    markPosted(){ const p=S.posts.find(x=>x.id===id); if(!p) return; p.status="posted"; p.postedAt=Date.now(); save(); render(); toast("Marked as posted"); },
+    unpost(){ const p=S.posts.find(x=>x.id===id); if(!p) return; p.status="draft"; delete p.postedAt; save(); render(); toast("Moved back to drafts"); },
+    delPost(){ removeWithUndo("posts", id, "Post"); },
+    addQ(){ const inp=$("#q_"+CSS.escape(id)); const v=inp?inp.value.trim():""; if(!v){ if(inp) inp.focus(); return toast("Paste the question first"); }
+      const p=S.posts.find(x=>x.id===id); if(!p) return; (p.questions=p.questions||[]).push({id:uid(),text:v}); clearForm("q_"+id); save(); render(); },
+    delQ(){ const p=S.posts.find(x=>x.id===id); if(!p) return; const qi=p.questions.findIndex(q=>q.id===t.dataset.q); if(qi<0) return; const q=p.questions[qi];
+      p.questions.splice(qi,1); save(); render();
+      toast("Question deleted", ()=>{ const pp=S.posts.find(x=>x.id===id); if(pp && !pp.questions.some(x=>x.id===q.id)){ pp.questions.splice(Math.min(qi,pp.questions.length),0,q); save(); render(); toast("Question restored"); } }); },
+    useQ(){ U.guideQ=id+"|"+t.dataset.q; go("guide"); },
+    newGuide(){
+      let q=$("#gQText").value.trim(), postId="";
+      const sel=$("#gQ").value;
+      if(!q && sel){ const [pid,qid]=sel.split("|"); const p=S.posts.find(x=>x.id===pid); const qq=p&&p.questions.find(x=>x.id===qid); if(qq){q=qq.text; postId=pid;} }
+      if(!q) return toast("Pick or type one question");
+      S.guides.push({id:uid(),question:q,postId,title:"",body:"",emailLink:"",made:false,out:false,larger:false,createdAt:Date.now()});
+      U.guideQ=""; clearForm("gQText"); save(); render(); toast("Guide started");
+    },
+    delGuide(){ removeWithUndo("guides", id, "Guide"); },
+    undo(){ const f=toast._undo; toast._undo=null; $("#toast").classList.remove("on","undo"); if(f) f(); },
+    more(){ const k=t.dataset.key; U.limits[k]=(U.limits[k]||LIM)+LIM; saveUi(); renderKeep(); },
+    resolve(){ const it=(S[t.dataset.kind]||[]).find(x=>x.id===id); if(it){ delete it.conflictOf; delete it.conflictAt; save(); render(); } },
+    useConflict(){ const c=S.conflicts.find(x=>x.id===id); if(!c) return; Object.assign(S[c.what], c.value); S.conflicts=S.conflicts.filter(x=>x.id!==id); save(); render(); toast("Switched to that version"); },
+    dropConflict(){ S.conflicts=S.conflicts.filter(x=>x.id!==id); save(); render(); },
+    dismissNotice(){ notice=""; render(); },
+    openSync(){ go("sync"); },
+    connect(){ connectSync({owner:$("#syOwner").value, repo:$("#syRepo").value, token:$("#syToken").value}); },
+    syncNow(){ syncState.blocked=false; syncState.backoff=0; runSync("manual"); },
+    disconnect(){ disconnectSync(); },
+    showQr(){ syncState.qr=true; render(); },
+    hideQr(){ syncState.qr=false; render(); },
+    copyLink(){ copy(connectLink(),"Link"); },
+    replaceToken(){ const v=$("#syNewToken").value.trim(); if(v.length<20) return toast("Paste the whole new token"); connectSync({owner:SY.owner, repo:SY.repo, token:v}); },
+    import(){ $("#importFile").click(); },
+    export(){
+      flush();
+      const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
+      const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+      a.download="idea-catcher-"+new Date().toISOString().slice(0,10)+".json"; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+      toast("Exported");
+    }
+  };
+  if(A[act]) A[act]();
+});
+document.addEventListener("input", e=>{
+  const t=e.target; if(!t.isConnected) return;
+  if(t.id && isFormId(t.id)){ U.form[t.id]=t.value; saveUiSoon(); return; }
+  if(t.dataset.set!==undefined){ S.settings[t.dataset.set]=t.value; saveSoon(); return; }
+  if(t.dataset.angle!==undefined){ const c=currentAngleIdea(); if(!c) return; angleData(c).answers[+t.dataset.angle]=t.value; saveSoon(); const b=document.querySelector('[data-act="toDraft"]'); if(b) b.disabled=!angleData(c).answers.some(x=>x.trim()); return; }
+  if(t.dataset.extra!==undefined){ const c=currentAngleIdea(); if(c){ angleData(c).extra=t.value; saveSoon(); } return; }
+  if(t.dataset.post){ const p=S.posts.find(x=>x.id===t.dataset.post); if(!p) return; p[t.dataset.field]=t.dataset.field==="replies"?Math.max(0,Math.floor(+t.value||0)):t.value; saveSoon(); return; }
+  if(t.dataset.guide){ const g=S.guides.find(x=>x.id===t.dataset.guide); if(!g) return; g[t.dataset.field]=t.value; saveSoon(); return; }
+  if(t.dataset.filter!==undefined){ U.filter=t.value; saveUiSoon(); renderKeep(); }
+});
+document.addEventListener("change", e=>{
+  const t=e.target;
+  if(t.name==="capBoard"){ U.form.capBoard=t.value; saveUiSoon(); $("#whyWrap").style.display=t.value==="validated"?"block":"none"; return; }
+  if(!t.isConnected) return;   // a field removed by a re-render can still fire "change" with its old text
+  if(t.id && isFormId(t.id)){ if(t.tagName==="SELECT"){ U.form[t.id]=t.value; saveUiSoon(); } return; }
+  if(t.dataset.pick){ U[t.dataset.pick]=t.value; if(t.dataset.pick==="draftIdea") U.draftAngle=""; saveUi(); renderKeep(); return; }
+  if(t.dataset.rate!==undefined){ const c=currentAngleIdea(); if(!c) return; const a=angleData(c); const k=t.dataset.rate; a.rate[k]=a.rate[k]||{}; a.rate[k][t.dataset.x]=t.checked; save(); return; }
+  if(t.dataset.plan){ S.plan[t.dataset.plan]=t.checked; save(); renderKeep(); return; }
+  if(t.dataset.gcheck){ const g=S.guides.find(x=>x.id===t.dataset.gcheck); if(!g) return; g[t.dataset.field]=t.checked; save(); return; }
+  if(t.id==="importFile" && t.files && t.files[0]){
+    const file=t.files[0]; const r=new FileReader();
+    r.onerror=()=>{ toast("Couldn't read that file. Nothing changed."); t.value=""; };
+    r.onload=()=>{
+      t.value="";
+      let n=null; try{ n=normalize(JSON.parse(r.result)); }catch(_){}
+      if(!n){ toast("That file isn't an Idea Catcher backup. Nothing changed."); return; }
+      flush();
+      try{ localStorage.setItem(KEY+".before-import", JSON.stringify(S)); }catch(_){}
+      const before={ideas:S.ideas.length, posts:S.posts.length};
+      S=merge2(S,n.data); save(); render();
+      const added=S.ideas.length-before.ideas;
+      toast(`Imported and merged with what you had${added>0?` (${added} new idea${added===1?"":"s"})`:""}.`);
+    };
+    r.readAsText(file);
+  }
+});
+document.addEventListener("keydown", e=>{
+  if((e.ctrlKey||e.metaKey) && e.key==="Enter" && e.target.id==="capText"){ e.preventDefault(); const b=document.querySelector('[data-act="capture"]'); if(b) b.click(); }
+});
+const fromLink = takeConnectFragment();
+if(fromLink){ U.tab="sync"; saveUi(); }
+render();
+if(fromLink) connectSync(fromLink); else if(connected()){ syncState.state="idle"; updatePill(); runSync("load"); }
+// Installable app + offline: only works when served over http(s) (e.g. GitHub Pages), not from a file:// double-click.
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+  addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+}
+})();
+</script>
+</body>
+</html>
