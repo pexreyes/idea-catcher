@@ -114,21 +114,63 @@ label.check{margin:0;color:var(--text);font-size:15px;cursor:pointer}
   .check input{width:22px;height:22px}
 }
 
+/* ---- wizard layout ---- */
+main{max-width:720px}
+.top{max-width:720px}
+.logo{background:none;border:0;color:var(--text);cursor:pointer;font:inherit;font-weight:800;font-size:18px;padding:6px 0}
+.hero{text-align:center;padding:26px 0 18px}
+.hero h1{font-size:28px}
+.btn.big{display:block;width:100%;max-width:440px;margin:16px auto 10px;font-size:20px;padding:18px;border-radius:14px}
+.hero .btn.ghost{display:block;margin:0 auto}
+.intro{border-color:var(--accent)}
+.intro p{margin:0 0 8px}
+h2.sec{margin:14px 0 10px}
+.idea .angle{border-left:3px solid var(--accent);padding-left:10px;color:#d8dbe2;font-size:14px}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.prog{font-weight:700;color:var(--text)}
+.qcard{margin-top:20px}
+.qlab{display:block;font-size:23px;font-weight:700;color:var(--text);margin:6px 0 14px;line-height:1.3;letter-spacing:-.01em}
+.qin{min-height:150px;font-size:17px}
+.remind{color:var(--muted);font-size:13.5px;margin:0 0 6px;white-space:pre-wrap}
+.help{color:var(--muted);margin:12px 0 6px}
+.dan{border-left:3px solid var(--accent);padding:4px 12px;color:#c9ccd3;font-style:italic;font-size:13.5px;margin:10px 0 0}
+.qnav{display:flex;gap:10px;margin-top:22px;position:sticky;bottom:0;background:var(--bg);padding:10px 0}
+.qnav .btn{flex:1;padding:14px;font-size:16px}
+.qnav .btn.p{flex:2}
+button.choice{display:block;width:100%;text-align:left;font:inherit;color:var(--text);cursor:pointer}
+button.choice.card.on{border-color:var(--accent);background:#211d12}
+.badge{display:inline-block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.choice.on .badge{color:var(--accent);font-weight:700}
+.ctext{display:block;white-space:pre-wrap;font-size:16px}
+details.pick{margin-top:12px}
+details.pick>summary{min-height:44px;padding:12px 0;box-sizing:border-box}
+details.pick .choice{margin-top:8px}
+.menu{display:block;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;color:var(--text);font:inherit;cursor:pointer}
+.menu b{display:block;font-size:16px;margin-bottom:2px}
+.menu span{color:var(--muted);font-size:13.5px}
+.menu:hover{border-color:#444a57}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.actions .btn{flex:1 1 150px;padding:14px;font-size:15px}
+.lead .big,.card.lead .big{font-size:19px;font-weight:600;margin:0;white-space:pre-wrap}
+.card.lead{border-color:var(--accent)}
+.rtitle{white-space:pre-wrap}
+.outline{padding-left:20px;margin:0 0 10px}
+.outline li{margin-bottom:8px;white-space:pre-wrap}
+@media (max-width:1024px),(pointer:coarse){ .menu,.logo{min-height:44px} }
 </style>
 </head>
 <body>
 <header>
   <div class="top">
-    <div class="logo">Idea <span>Catcher</span></div>
+    <button class="logo" data-tab="home" aria-label="Idea Catcher, home">Idea <span>Catcher</span></button>
     <div class="sp"></div>
-    <button class="btn s ghost" id="syncPill" data-act="openSync">Sync</button>
-    <button class="btn s ghost" data-act="export" title="Download all your data as JSON">Export</button>
-    <button class="btn s ghost" data-act="import" title="Load a JSON backup (merges, never deletes)">Import</button><input id="importFile" type="file" accept="application/json,.json" hidden aria-label="Import backup file">
+    <button class="btn s ghost" id="syncPill" data-act="openSync" hidden>Sync</button>
+    <button class="btn s ghost" id="moreBtn" data-tab="more">More</button>
+    <input id="importFile" type="file" accept="application/json,.json" hidden aria-label="Load backup file">
   </div>
-  <nav id="nav"></nav>
 </header>
 <main id="app"></main>
-<footer>Built on Dan Koe's "The influencer is dead. The Age of Experience is here." · <a href="https://x.com/thedankoe/status/2112586533610156368" target="_blank" rel="noopener">Read the article</a> · Data stays in this browser (localStorage). Export to back up; Import merges a backup in without deleting anything.</footer>
+<footer>Based on Dan Koe's article "The influencer is dead. The Age of Experience is here." Your ideas stay on this device unless you turn on sync.</footer>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -169,7 +211,7 @@ const ANGLE_QS = [
   "Why does this matter to the everyday person?"
 ];
 // Form fields that survive navigation, reloads and closed tabs (no lost work mid-edit)
-const FORM = new Set(["capText","capType","capSource","capWhy","srcName","srcKind","srcUrl","srcNote","crName","crUrl","crNote","swText","swUrl","swWhy","swPrin","opText","drPlat","drText","gQText"]);
+const FORM = new Set([]);
 
 /* ---------- helpers ---------- */
 const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
@@ -219,7 +261,7 @@ function blank(){
   SINGLES.forEach(k=>{ d[k]._h=hash(d[k]); d[k].updatedAt=0; });
   return d;
 }
-function blankUi(){ return {tab:"start", angleIdea:"", draftIdea:"", draftValidated:"", draftAngle:"", guideQ:"", filter:"", srcCapture:"", swipeFor:"", form:{}, limits:{}}; }
+function blankUi(){ return {tab:"home", wizId:"", step:0, resultId:"", introSeen:false, filter:"", form:{}, limits:{}}; }
 
 // Turn anything (old versions, partial backups, hand-edited files) into a valid data object.
 // Returns null if it isn't Idea Catcher data at all. Sets lossy=true if something had to be dropped.
@@ -238,6 +280,8 @@ function normalize(raw){
   d.ideas = list("ideas").map(i=>{
     const o=base(i); o.text=str(i.text); o.type=str(i.type); o.board=i.board==="validated"?"validated":"favorite";
     o.source=str(i.source); o.why=str(i.why); o.principle=str(i.principle); o.creatorId=okId(i.creatorId)?i.creatorId:"";
+    if(i.wip) o.wip=true; else delete o.wip; if(i.savedAt) o.savedAt=num(i.savedAt); else delete o.savedAt;
+    if(i.proven!=null) o.proven=str(i.proven); if(i.provenWhy!=null) o.provenWhy=str(i.provenWhy);
     if(i.angles!=null){
       const a=isObj(i.angles)?i.angles:{}; const ans=Array.isArray(a.answers)?a.answers:[];
       o.angles={answers:[0,1,2,3,4].map(k=>str(ans[k])), stars:[...new Set((Array.isArray(a.stars)?a.stars:[]).map(Number).filter(k=>k>=0&&k<5&&k%1===0))].slice(-2),
@@ -309,7 +353,8 @@ function merge2(a,b){
 let notice = "";
 let lastRaw = null;
 let S, U;
-function readUi(){ try{ const u=JSON.parse(localStorage.getItem(UIKEY)||"null"); if(isObj(u)) return Object.assign(blankUi(),u,{form:isObj(u.form)?u.form:{}, limits:isObj(u.limits)?u.limits:{}}); }catch(_){} return null; }
+const TABS0 = new Set(["home","q","result","more","old","notes","backup","sync"]);
+function readUi(){ try{ const u=JSON.parse(localStorage.getItem(UIKEY)||"null"); if(isObj(u)) return Object.assign(blankUi(),u,{tab:TABS0.has(u.tab)?u.tab:"home"},{form:isObj(u.form)?u.form:{}, limits:isObj(u.limits)?u.limits:{}}); }catch(_){} return null; }
 function load(){
   let raw=null; try{ raw=localStorage.getItem(KEY); }catch(_){}
   U = readUi();
@@ -317,7 +362,7 @@ function load(){
   let n=null; try{ n=normalize(JSON.parse(raw)); }catch(_){}
   if(n){
     S=n.data; lastRaw=raw;
-    if(!U) U=Object.assign(blankUi(), n.ui||{}, {form:{}, limits:{}});
+    if(!U) U=Object.assign(blankUi(), {form:{}, limits:{}});
     if(n.lossy){ keepCopy(raw); notice="Some saved data was in an unexpected format. A full copy of the original was kept in this browser, so nothing is lost. Export a backup to be safe."; }
     else { try{ localStorage.setItem(BAK, raw); }catch(_){} }   // last known-good copy
   } else {
@@ -388,52 +433,31 @@ function go(tab){ flush(); U.tab=tab; saveUi(); render(); window.scrollTo(0,0); 
 function limited(list,key){ const n=U.limits[key]||LIM; return {items:list.slice(0,n), more:list.length>n?`<button class="btn s" data-act="more" data-key="${esc(key)}">Show more (${list.length-n} more)</button>`:""}; }
 function cfx(kind,i){ return i.conflictOf?`<span class="pill cfx">Conflict copy</span><button class="btn s ghost" data-act="resolve" data-kind="${kind}" data-id="${esc(i.id)}">Keep both, clear flag</button>`:""; }
 
-/* ---------- derived stats ---------- */
-function stats(){
-  const days = new Set(S.ideas.map(i=>dayKey(i.createdAt)));
-  const creatorSources = S.sources.filter(s=>s.kind===SOURCE_KINDS[2]).length;
-  const fullAngles = S.ideas.filter(i=>anglesDone(i)===5).length;
-  const posted = S.posts.filter(p=>p.status==="posted");
-  const tracked = posted.filter(p=>(+p.replies||0)>0 || (p.questions||[]).length).length;
-  const questions = posted.reduce((n,p)=>n+(p.questions||[]).length,0);
-  const studied = S.creators.filter(c=>S.ideas.some(i=>i.creatorId===c.id)).length;
-  return {days:days.size, creatorSources, fullAngles, posted:posted.length, tracked, questions, studied,
-    fav:S.ideas.filter(i=>i.board==="favorite").length, val:S.ideas.filter(i=>i.board==="validated").length,
-    guides:S.guides.filter(g=>g.made).length, guidesOut:S.guides.filter(g=>g.out).length, larger:S.guides.filter(g=>g.larger).length};
-}
-
 /* ---------- render ---------- */
-function renderNav(){
-  $("#nav").innerHTML = STEPS.map(s=>`<button data-tab="${s.id}" class="${U.tab===s.id?"on":""}" ${U.tab===s.id?'aria-current="page"':""}><b>${s.n}</b>${s.label}</button>`).join("");
-  const on=document.querySelector("#nav button.on"); if(on&&on.scrollIntoView) on.scrollIntoView({block:"nearest",inline:"center"});
-}
-function nextBar(prev,next){
-  const p = STEPS.find(s=>s.id===prev), n = STEPS.find(s=>s.id===next);
-  return `<div class="next">${p?`<button class="btn ghost" data-tab="${p.id}">← ${p.label}</button>`:"<span></span>"}${n?`<button class="btn p" data-tab="${n.id}">Next: ${n.label} →</button>`:""}</div>`;
-}
+// The app is one short question flow. Home = Start + Saved. Everything else lives under More.
+const QN = 8;   // questions: idea, proven post, 5 angle questions (Dan's), strongest angle
+const TABS = new Set(["home","q","result","more","old","notes","backup","sync"]);
 function banners(){
   let h="";
   if(notice) h+=`<div class="banner" role="alert">${esc(notice)}<div class="row"><button class="btn s" data-act="export">Export a backup</button><button class="btn s ghost" data-act="dismissNotice">Dismiss</button></div></div>`;
   const copies = COLS.reduce((t,c)=>t+S[c].filter(x=>x.conflictOf).length,0);
-  if(copies) h+=`<div class="banner" role="status">${copies} item${copies===1?" was":"s were"} edited in two places at once. Nothing was thrown away: the other version is kept as a separate item marked <b>Conflict copy</b>. Keep the one you want and delete the other.</div>`;
+  if(copies) h+=`<div class="banner" role="status">${copies} item${copies===1?" was":"s were"} changed on two devices at once. Nothing was thrown away: the other version is kept and marked <b>Conflict copy</b>. Keep the one you want and delete the other.</div>`;
   S.conflicts.forEach(c=>{
-    const v=c.value, label=c.what==="settings"?"About you (topics and thinkers)":"30-day plan checkboxes";
-    const shown=c.what==="settings"?`Topics: "${esc(v.topics)}" · Thinkers: "${esc(v.thinkers)}"`:`Phone set up: ${v.phone?"yes":"no"} · Keep going 12 months: ${v.keepGoing?"yes":"no"}`;
-    h+=`<div class="banner" role="status"><b>${label}</b> was changed in two places. The other version: ${shown}<div class="row"><button class="btn s" data-act="useConflict" data-id="${esc(c.id)}">Use that version</button><button class="btn s ghost" data-act="dropConflict" data-id="${esc(c.id)}">Keep current</button></div></div>`;
+    if(c.what!=="settings"){ h+=`<div class="banner" role="status">Some old settings were changed in two places.<div class="row"><button class="btn s ghost" data-act="dropConflict" data-id="${esc(c.id)}">OK</button></div></div>`; return; }
+    h+=`<div class="banner" role="status">Your thinker name was changed in two places. The other version: "${esc(c.value.thinkers)}"<div class="row"><button class="btn s" data-act="useConflict" data-id="${esc(c.id)}">Use that version</button><button class="btn s ghost" data-act="dropConflict" data-id="${esc(c.id)}">Keep current</button></div></div>`;
   });
   return h;
 }
 function render(){
-  renderNav();
-  const v = {start:vStart,museum:vMuseum,density:vDensity,study:vStudy,angle:vAngle,draft:vDraft,listen:vListen,guide:vGuide,sync:vSync}[U.tab]||vStart;
+  if(!TABS.has(U.tab)) U.tab="home";
+  if(U.tab==="q" && !wizItem()) U.tab="home";
+  if(U.tab==="result" && !idea(U.resultId)) U.tab="home";
+  const v = {home:vHome,q:vQ,result:vResult,more:vMore,old:vOld,notes:vNotes,backup:vBackup,sync:vSync}[U.tab];
   $("#app").innerHTML = banners()+v();
+  document.body.dataset.view = U.tab;
   restoreForm(); a11y(); if(typeof updatePill==="function") updatePill();
 }
-function restoreForm(){
-  for(const id in U.form){ const el=document.getElementById(id); if(el && el.type!=="file") el.value=U.form[id]; }
-  const b=U.form.capBoard; if(b){ const r=document.querySelector(`input[name="capBoard"][value="${b==="validated"?"validated":"favorite"}"]`); if(r) r.checked=true; }
-  const w=$("#whyWrap"); if(w) w.style.display=(U.form.capBoard==="validated")?"block":"none";
-}
+function restoreForm(){ for(const id in U.form){ const el=document.getElementById(id); if(el && el.type!=="file" && !el.value) el.value=U.form[id]; } }
 function a11y(){
   document.querySelectorAll("#app input,#app textarea,#app select").forEach(el=>{
     if(el.getAttribute("aria-label")||el.closest("label")) return;
@@ -442,7 +466,7 @@ function a11y(){
     if(name) el.setAttribute("aria-label",name);
   });
 }
-// Re-render without stealing the cursor (used when another tab changes data)
+// Re-render without stealing the cursor (used when another tab or device changes data)
 function renderKeep(){
   const a=document.activeElement; let sel=null, s0=0, s1=0;
   if(a && a!==document.body && a.closest("#app")){
@@ -454,343 +478,192 @@ function renderKeep(){
   if(sel){ const n=document.querySelector(sel); if(n){ n.focus({preventScroll:true}); try{ if(s0!=null) n.setSelectionRange(s0,s1); }catch(_){} } }
 }
 
-/* 0. Start */
-function vStart(){
-  const st = stats();
-  const ck = (done,label,auto,key) => key
-    ? `<label class="check"><input type="checkbox" ${done?"checked":""} data-plan="${key}"><div class="${done?"done":""}">${label}</div><div class="auto">${auto||""}</div></label>`
-    : `<div class="check"><input type="checkbox" ${done?"checked":""} disabled aria-label="Ticks itself"><div class="${done?"done":""}">${label}</div><div class="auto">${auto||""}</div></div>`;
-  const w1 = [st.creatorSources>=5, S.plan.phone, st.days>=7];
-  const w2 = [st.studied>=3, st.fullAngles>=7, st.posted>=1];
-  const w3 = [st.posted>=3, st.tracked>=1];
-  const w4 = [st.guides>=1, st.guidesOut>=1, st.larger>=1];
-  const pct = a => Math.round(a.filter(Boolean).length/a.length*100);
-  return `
-  <div class="kicker">Dan Koe's process, step by step</div>
-  <h1>Build a mind that's a magnet for ideas</h1>
-  <p class="lead">This app follows the process in Dan's article in his order. First you build an idea museum and fill it from dense sources (A1–A2). Then you study what's already working and find your angle (B1–B2). Finally you merge a loved idea with a proven one and run his 30-day plan.</p>
-  <div class="quote">"The ultimate moat, or the final competitive edge worth paying for, in my opinion, is an opinion."<small>Ideas "evaporate within a day if you don't capture them". "The habit matters more than the app."</small></div>
+/* ---------- which ideas are "saved" vs "old" ---------- */
+const answered = i => i.angles ? i.angles.answers.map((a,k)=>[k,a]).filter(([k,a])=>a.trim()) : [];
+const isSaved = i => i.wip ? (i.id!==U.wizId && hasContent(i)) : (!!i.savedAt || answered(i).length>0);   // a draft started on another device shows here too
+const isOld = i => !i.wip && !isSaved(i);
+function wizItem(){ const i=idea(U.wizId); return i||null; }
+function currentAngleIdea(){ return wizItem(); }
+function leadAngle(i){ const a=i.angles; if(!a) return null; const s=a.stars.find(k=>a.answers[k]&&a.answers[k].trim()); if(s!=null) return s; const f=answered(i)[0]; return f?f[0]:null; }
+function thinkerName(){ return S.settings.thinkers.split(",")[0].trim(); }
+function angleLabel(k){ return k===0 ? (thinkerName()?`How would ${thinkerName()} say this?`:"How would a thinker you love say this?") : ANGLE_QS[k]; }
+function savedWhen(i){ return fmt(i.savedAt||i.createdAt); }
 
-  <div class="card">
-    <h2>About you (used to fill in Dan's prompts)</h2>
-    <div class="grid2">
-      <div><label for="setTopics">What do you talk about? [topics]</label><input id="setTopics" data-set="topics" value="${esc(S.settings.topics)}" placeholder="e.g. video ads for small businesses, AI ad creatives, hooks that sell"></div>
-      <div><label for="setThinkers">Thinkers I love (for angle #1)</label><input id="setThinkers" data-set="thinkers" value="${esc(S.settings.thinkers)}" placeholder="e.g. people whose way of thinking shaped you"></div>
-    </div>
-  </div>
-
-  <div class="grid3" style="margin-bottom:14px">
-    <div class="card"><h3>Museum</h3><div class="stat">${S.ideas.length}</div><div class="small">${st.fav} favorite · ${st.val} validated</div></div>
-    <div class="card"><h3>Angles</h3><div class="stat">${st.fullAngles}</div><div class="small">ideas with all 5 angles written</div></div>
-    <div class="card"><h3>Posted</h3><div class="stat">${st.posted}</div><div class="small">${st.questions} reader questions saved</div></div>
-  </div>
-
-  <h2>His 30-day plan</h2>
-  <p class="small" style="margin-top:-6px">"You can do this as fast or as slow as you want ... you could do it all in a day." Most checks tick themselves as you use each step. The counts (7 days, 7 ideas) are this app's reading of "a day" over one week, not numbers from the article.</p>
-  <div class="grid2">
-    <div class="card"><h3>Week 1 · Build your museum</h3>
-      ${ck(S.plan.phone,"Set up capture on your phone (open this file on your phone, or export and import your data there)","", "phone")}
-      ${ck(w1[0],`Make your list of 5 creators <a href="#" data-tab="density">→ A2</a>`,`${Math.min(st.creatorSources,5)}/5`)}
-      ${ck(w1[2],`Save one idea a day <a href="#" data-tab="museum">→ A1</a>`,`${st.days}/7 day${st.days===1?"":"s"}`)}
-      <div class="bar"><i style="width:${pct(w1)}%"></i></div></div>
-    <div class="card"><h3>Week 2 · Study & angles</h3>
-      ${ck(w2[0],`Find 3 mid-sized creators and reverse engineer their strategy <a href="#" data-tab="study">→ B1</a>`,`${Math.min(st.studied,3)}/3`)}
-      ${ck(w2[1],`Write 5 angles on one idea a day <a href="#" data-tab="angle">→ B2</a>`,`${st.fullAngles}/7`)}
-      ${ck(w2[2],`Post the best ones <a href="#" data-tab="draft">→ Post</a>`,`${st.posted} posted`)}
-      <div class="bar"><i style="width:${pct(w2)}%"></i></div></div>
-    <div class="card"><h3>Week 3 · Keep posting, listen</h3>
-      ${ck(w3[0],`Keep posting <a href="#" data-tab="draft">→ Post</a>`,`${st.posted} posted`)}
-      ${ck(w3[1],`Pay attention to which posts get the most replies and questions <a href="#" data-tab="listen">→ W3</a>`,`${st.tracked} tracked`)}
-      <div class="bar"><i style="width:${pct(w3)}%"></i></div></div>
-    <div class="card"><h3>Week 4 · First guide</h3>
-      ${ck(w4[0],`Pick one question and make a one-page guide that answers it <a href="#" data-tab="guide">→ W4</a>`,"")}
-      ${ck(w4[1],"Put it out as a free guide to collect emails","")}
-      ${ck(w4[2],"Build a larger version with the product prompt","")}
-      <div class="bar"><i style="width:${pct(w4)}%"></i></div></div>
-  </div>
-  <div class="card">${ck(S.plan.keepGoing,'"Then, keep doing it for the next 12 months."',"","keepGoing")}</div>
-  ${nextBar(null,"museum")}`;
-}
-
-/* A1. Museum */
-function ideaCard(i){
-  const n = anglesDone(i), id=esc(i.id);
+/* ---------- Home ---------- */
+function savedCard(i){
+  const id=esc(i.id), k=leadAngle(i), done=k!=null;
   return `<div class="idea" data-id="${id}">
-    <p>${esc(i.text)}</p>
-    <div class="meta"><span class="pill ${i.board==="favorite"?"fav":"val"}">${i.board==="favorite"?"Favorite":"Validated"}</span><span>${esc(i.type||"")}</span><span>${fmt(i.createdAt)}</span>${n?`<span class="pill ok">${n}/5 angles</span>`:""}${cfx("ideas",i)}</div>
-    ${i.source?`<div class="meta">Source: ${linkify(i.source)}</div>`:""}
-    ${i.why?`<div class="meta">Why it did well: ${esc(i.why)}</div>`:""}
-    ${i.principle?`<div class="meta">Principle to apply: ${esc(i.principle)}</div>`:""}
-    ${U.editIdea===i.id?`<label for="edit_${id}">Edit the idea</label><textarea id="edit_${id}" data-editidea="${id}">${esc(i.text)}</textarea>
-      <div class="row" style="margin-top:8px"><button class="btn s p" data-act="saveEdit" data-id="${id}">Save</button><button class="btn s ghost" data-act="cancelEdit">Cancel</button></div>`:`
+    <p class="t">${esc(i.text||"(no text)")}</p>
+    <div class="meta"><span>${esc(savedWhen(i))}</span>${done?`<span class="pill ok">Ready</span>`:`<span class="pill">Idea only</span>`}${cfx("ideas",i)}</div>
+    ${done?`<p class="angle">${esc(i.angles.answers[k])}</p>`:""}
     <div class="row">
-      ${i.board==="favorite"?`<button class="btn s" data-act="toAngle" data-id="${id}">Find angles →</button>`:`<button class="btn s" data-act="pairThis" data-id="${id}">Pair in a post →</button>`}
-      <button class="btn s ghost" data-act="editIdea" data-id="${id}">Edit</button>
-      <button class="btn s ghost" data-act="flip" data-id="${id}">Move to ${i.board==="favorite"?"Validated":"Favorite"}</button>
+      ${done?`<button class="btn s" data-act="openResult" data-id="${id}">Open</button><button class="btn s ghost" data-act="copyResult" data-id="${id}">Copy prompt</button>`
+            :`<button class="btn s" data-act="continueIdea" data-id="${id}">Continue</button>`}
       <button class="btn s ghost danger" data-act="delIdea" data-id="${id}">Delete</button>
-    </div>`}</div>`;
+    </div></div>`;
 }
-function vMuseum(){
-  const f = (U.filter||"").toLowerCase();
-  const list = S.ideas.filter(i=>!f || (i.text+" "+(i.source||"")+" "+(i.why||"")).toLowerCase().includes(f)).sort((a,b)=>b.createdAt-a.createdAt);
-  const fav = limited(list.filter(i=>i.board==="favorite"),"fav"), val = limited(list.filter(i=>i.board==="validated"),"val");
-  const nf=list.filter(i=>i.board==="favorite").length, nv=list.length-nf;
-  const today = S.ideas.some(i=>dayKey(i.createdAt)===dayKey(Date.now()));
+function vHome(){
+  const w=wizItem(), wipOn = w && w.wip && (w.text.trim()||answered(w).length||(w.proven||"").trim());
+  const f=(U.filter||"").toLowerCase();
+  const all=S.ideas.filter(isSaved).sort((a,b)=>(b.savedAt||b.createdAt)-(a.savedAt||a.createdAt));
+  const list=all.filter(i=>!f || (i.text+" "+(i.angles?i.angles.answers.join(" "):"")).toLowerCase().includes(f));
+  const L=limited(list,"saved");
   return `
-  <div class="kicker">Part A · Step 1</div>
-  <h1>Build an idea museum</h1>
-  <p class="lead">Your swipe file. Jot ideas down as soon as they come to mind, because "the idea that hit you in the shower is gone by lunch if you trust your memory." Don't overcomplicate this.</p>
-  <div class="card ${today?"":"hl"}">
-    <div class="row" style="justify-content:space-between"><h2 style="margin:0">Capture</h2><span class="small">${today?'<span class="done">✓ Idea saved today</span>':'<span class="warn">Save one idea today</span>'}</span></div>
-    <label for="capText">The idea</label>
-    <textarea id="capText" placeholder="e.g. Most small business ads lose people in the first 2 seconds because they open with the logo"></textarea>
-    <div class="grid2">
-      <div><label for="capType">What is it?</label><select id="capType">${CAPTURE_TYPES.map(t=>`<option>${t}</option>`).join("")}</select></div>
-      <div><label for="capSource">Source or link (optional)</label><input id="capSource" placeholder="Book, post URL, video, conversation..."></div>
-    </div>
-    <label id="boardLab">Which board?</label>
-    <div class="seg" role="radiogroup" aria-labelledby="boardLab">
-      <label><input type="radio" name="capBoard" value="favorite" checked> Favorite Ideas: ideas you love</label>
-      <label><input type="radio" name="capBoard" value="validated"> Validated Ideas: posts that have gone viral</label>
-    </div>
-    <div id="whyWrap" style="display:none"><label for="capWhy">Why did this post do well? (optional)</label><input id="capWhy" placeholder="Hook, format, timing, emotion..."></div>
-    <div class="row" style="margin-top:12px"><button class="btn p" data-act="capture">Save to museum</button><span class="small">Ctrl/⌘ + Enter</span></div>
-  </div>
-  <div class="quote">"When you merge the two together, from your own point of view, that's when you have a great social post."</div>
-  <input placeholder="Search your museum..." aria-label="Search your museum" data-filter value="${esc(U.filter||"")}" style="margin-bottom:14px">
-  <div class="grid2">
-    <div><h3 style="color:var(--fav)">Favorite Ideas · ${nf}</h3>${fav.items.map(ideaCard).join("")||`<div class="empty">${f?"No matches.":"Ideas you love go here."}</div>`}${fav.more}</div>
-    <div><h3 style="color:var(--val)">Validated Ideas · ${nv}</h3>${val.items.map(ideaCard).join("")||`<div class="empty">${f?"No matches.":"Posts that have gone viral go here."}</div>`}${val.more}</div>
-  </div>
-  ${nextBar("start","density")}`;
+  ${U.introSeen?"":`<div class="card intro" id="intro"><p><b>Hi Pex.</b> Answer ${QN} short questions about one idea, one at a time. You'll get a post outline plus a prompt you can paste into any AI tool.</p><p class="small">Based on Dan Koe's article "The influencer is dead. The Age of Experience is here."</p><button class="btn s" data-act="introOk">Got it</button></div>`}
+  <section class="hero">
+    <h1>Turn one idea into a post</h1>
+    ${wipOn?`<button class="btn p big" data-act="resume">Continue your idea (question ${Math.min(U.step,QN-1)+1} of ${QN})</button>
+      <button class="btn ghost" data-act="startNew">Start a new one instead</button>`
+    :`<button class="btn p big" data-act="start">Start</button>`}
+  </section>
+  <h2 class="sec">Saved${all.length?` · ${all.length}`:""}</h2>
+  ${all.length>5?`<input placeholder="Search saved..." aria-label="Search saved" data-filter value="${esc(U.filter||"")}" style="margin-bottom:12px">`:""}
+  ${L.items.map(savedCard).join("") || (f?`<div class="empty">No matches.</div>`:`<div class="empty">Nothing saved yet. Tap <b>Start</b>, answer the questions, and your result will be saved here.</div>`)}
+  ${L.more}`;
 }
 
-/* A2. Density */
-function vDensity(){
-  const st = stats();
-  const sel = U.srcCapture;
-  const byKind = k => S.sources.filter(s=>s.kind===k);
+/* ---------- Questions (one per screen) ---------- */
+function stepHelp(step){
+  const H = [
+    [`"Capture random thoughts, social posts that inspired you, video notes, and anything else."`, `Type the idea in your own words. Rough is fine.`],
+    [`Dan pairs an idea you love with one that's "already proven to work (posts that did far better than usual)."`, `Optional. Paste or describe a post on this topic that did really well, and why. "You aren't taking the idea… you take the principles that make it work."`],
+    [`"If you post it the way you found it, then you're posting something that's probably been said a thousand times. You have to change the perspective."`, `Dan's first angle question. 1 or 2 plain sentences. Skip any question that doesn't spark anything.`],
+    [`Dan's second angle question.`, `What would you tell the version of you who didn't know this yet?`],
+    [`Dan's third angle question.`, `Give the idea a new meaning or a sharper definition.`],
+    [`Dan's example: "constraints make you more creative" becomes "constraints don't make you creative, they make you decisive."`, `Say what most people believe, then where you disagree.`],
+    [`Dan's fifth angle question.`, `Why should a normal person, not an expert, care?`],
+    [`"Flag the strongest 2 and say why, using relatable, novel, and simple."`, `Tap the 1 or 2 strongest. The first one you tap leads your post.`]
+  ];
+  return H[step];
+}
+function vQ(){
+  const i=wizItem(), step=Math.max(0,Math.min(QN-1,U.step|0)), [quote,help]=stepHelp(step), a=angleData(i);
+  const top = `<div class="qtop"><button class="btn ghost s" data-act="wBack">← Back</button><span class="prog" aria-label="Question ${step+1} of ${QN}">${step+1} of ${QN}</span><button class="btn ghost s" data-act="wClose">Save & close</button></div>
+    <div class="bar" aria-hidden="true"><i style="width:${Math.round((step+1)/QN*100)}%"></i></div>`;
+  let body="", optional=step>0;
+  if(step===0){
+    const old=S.ideas.filter(isOld).sort((x,y)=>y.createdAt-x.createdAt);
+    body=`<label class="qlab" for="wText">What's the idea?</label>
+      <textarea id="wText" class="qin" data-wf="text" placeholder="e.g. Most small business ads lose people in the first 2 seconds">${esc(i.text)}</textarea>
+      ${old.length?`<details class="pick"><summary>Or use one you saved earlier (${old.length})</summary>${old.slice(0,30).map(o=>`<button class="btn s ghost choice" data-act="pickOld" data-id="${esc(o.id)}">${esc(o.text.slice(0,120))}</button>`).join("")}</details>`:""}
+      <button class="btn ghost s" data-act="saveIdeaOnly" style="margin-top:10px">Just save the idea for now</button>`;
+  } else if(step===1){
+    body=`<label class="qlab" for="wProven">Has a post on this already done really well?</label>
+      <textarea id="wProven" class="qin" data-wf="proven" placeholder="Paste it or describe it (optional)">${esc(i.proven||"")}</textarea>
+      <label for="wProvenWhy">Why did it work?</label><input id="wProvenWhy" data-wf="provenWhy" value="${esc(i.provenWhy||"")}" placeholder="e.g. the hook names one specific mistake">`;
+  } else if(step<=6){
+    const k=step-2;
+    body=`${k===0?`<label for="wThinker">A thinker you love (optional)</label><input id="wThinker" data-set="thinkers" value="${esc(S.settings.thinkers)}" placeholder="e.g. Naval" style="margin-bottom:6px">`:""}
+      <label class="qlab" for="ang${k}">${esc(angleLabel(k))}</label>
+      <textarea id="ang${k}" class="qin" data-angle="${k}" placeholder="1 or 2 plain sentences">${esc(a.answers[k])}</textarea>`;
+  } else {
+    const ans=answered(i); optional=false;
+    body=`<h2 class="qlab">Which angle is strongest?</h2>
+      ${ans.length?ans.map(([k,txt])=>{ const n=a.stars.indexOf(k); return `<button class="choice card ${n>=0?"on":""}" data-act="star" data-k="${k}" aria-pressed="${n>=0}"><span class="badge">${n===0?"★ Leads":n===1?"★ Also strong":"Tap to pick"}</span><span class="ctext">${esc(txt)}</span></button>`; }).join("")
+        :`<div class="empty">You skipped all the angle questions. Go back and answer at least one. <button class="btn s" data-act="wGoto" data-step="2">Go to the first angle question</button></div>`}`;
+  }
+  const filled = step===0 ? !!i.text.trim() : step===1 ? !!((i.proven||"").trim()||(i.provenWhy||"").trim()) : step<=6 ? !!a.answers[step-2].trim() : a.stars.length>0;
+  const nextLabel = step===QN-1 ? "See my result" : (optional && !filled ? "Skip" : "Next");
+  return `${top}
+  <div class="qcard">
+    ${i.text.trim()&&step>0&&step<7?`<p class="remind">Your idea: ${esc(i.text.slice(0,160))}${i.text.length>160?"…":""}</p>`:""}
+    ${body}
+    <p class="help">${esc(help)}</p>
+    <p class="dan">${esc(quote)}</p>
+  </div>
+  <div class="qnav"><button class="btn" data-act="wBack">Back</button><button class="btn p" id="wNext" data-act="wNext" data-optional="${optional?1:0}">${nextLabel}</button></div>`;
+}
+
+/* ---------- Result (the output) ---------- */
+function outlineOf(i){
+  const a=angleData(i), k=leadAngle(i), ans=a.answers, out=[];
+  if(k!=null) out.push(["Hook (your strongest angle)", ans[k]]);
+  out.push(["The idea", i.text]);
+  const second=a.stars.find(x=>x!==k && ans[x] && ans[x].trim());
+  if(second!=null) out.push(["Second point (also strong)", ans[second]]);
+  [[3,"What most people think, and where you disagree"],[4,"Why it matters to your reader"],[1,"What you'd tell your past self"]].forEach(([n,lab])=>{ if(n!==k && n!==second && ans[n].trim()) out.push([lab, ans[n]]); });
+  if((i.provenWhy||"").trim()) out.push(["Borrow the principle from the post that worked", i.provenWhy]);
+  return out;
+}
+function outlineText(i){ return i.text.trim()+"\n\n"+outlineOf(i).map(([l,v],n)=>`${n+1}. ${l}: ${v.trim()}`).join("\n"); }
+function otherAngles(i){ const k=leadAngle(i), a=angleData(i); const s=a.stars.find(x=>x!==k); return answered(i).filter(([n])=>n!==k && n!==s); }
+function resultPrompt(i){
+  const a=angleData(i), k=leadAngle(i), s=a.stars.find(x=>x!==k && a.answers[x] && a.answers[x].trim());
+  const others=answered(i).filter(([n])=>n!==k && n!==s);
+  const L=[];
+  L.push("Help me write one short social post from my own point of view. Use my idea and my angle below. Keep my words where you can, don't invent facts about me, and if you don't know enough about me, ask me first.");
+  L.push(""); L.push("The idea: "+i.text.trim());
+  if(k!=null) L.push("My strongest angle (open with this): "+a.answers[k].trim());
+  if(s!=null) L.push("Also strong: "+a.answers[s].trim());
+  if(others.length){ L.push(""); L.push("Other angles I wrote:"); others.forEach(([n,t])=>L.push("- "+t.trim())); }
+  if((i.proven||"").trim()||(i.provenWhy||"").trim()){
+    L.push(""); if((i.proven||"").trim()) L.push("A post on this topic that already did really well: "+i.proven.trim());
+    if((i.provenWhy||"").trim()) L.push("Why it worked: "+i.provenWhy.trim());
+    L.push("Don't copy that post. Take the principles that make it work and apply them to my idea.");
+  }
+  L.push(""); L.push("Keep it relatable, novel, and simple, in plain sentences. Tell me if my angle is weak.");
+  return L.join("\n");
+}
+function vResult(){
+  const i=idea(U.resultId), a=angleData(i), k=leadAngle(i), saved=!!i.savedAt && !i.wip, ol=outlineOf(i), more=otherAngles(i);
   return `
-  <div class="kicker">Part A · Step 2</div>
-  <h1>Curate ideas based on density</h1>
-  <p class="lead">"If you want ideas nobody else has, you need sources nobody else is reading." High idea density means "books, articles, or accounts where almost every sentence is so good you can't ignore it."</p>
-  <div class="card">
-    <h2>Add an idea-dense source</h2>
-    <div class="grid3">
-      <div><label for="srcName">Name</label><input id="srcName" placeholder="Book title, blog, @handle"></div>
-      <div><label for="srcKind">Type</label><select id="srcKind">${SOURCE_KINDS.map(k=>`<option>${k}</option>`).join("")}</select></div>
-      <div><label for="srcUrl">Link (optional)</label><input id="srcUrl" placeholder="https://..."></div>
-    </div>
-    <label for="srcNote">Why is it dense? (optional)</label><input id="srcNote" placeholder="Almost every sentence is worth thinking about because...">
-    <div class="row" style="margin-top:12px"><button class="btn p" data-act="addSource">Add source</button><span class="small">Week 1 goal: a list of 5 creators. You have <b>${st.creatorSources}</b>.</span></div>
+  <div class="kicker">Your result</div>
+  <h1 class="rtitle">${esc(i.text)}</h1>${cfx("ideas",i)}
+  ${k!=null?`<div class="card lead"><h3>Your angle</h3><p class="big">${esc(a.answers[k])}</p></div>`:`<div class="empty">No angle picked yet. <button class="btn s" data-act="editAnswers" data-id="${esc(i.id)}" data-step="2">Answer the angle questions</button></div>`}
+  <div class="actions">
+    <button class="btn p" data-act="copyResult" data-id="${esc(i.id)}">Copy AI prompt</button>
+    <button class="btn" data-act="saveResult" data-id="${esc(i.id)}" ${saved?"disabled":""}>${saved?"Saved ✓":"Save"}</button>
+    <button class="btn" data-act="startAnother">Start another</button>
   </div>
-  <div class="card hl">
-    <h2>Don't know what to write about?</h2>
-    <p class="small" style="margin-top:-4px">Do what Dan does: "I open the list, find something I have an opinion on, and start drafting an idea." Open a source, then tap <b>I have an opinion on this</b>.</p>
+  <div class="card"><h3>Post outline (your words)</h3>
+    <ol class="outline">${ol.map(([l,v])=>`<li><b>${esc(l)}:</b> ${esc(v)}</li>`).join("")}</ol>
+    <button class="btn s" data-act="copyOutline" data-id="${esc(i.id)}">Copy outline</button></div>
+  <div class="card"><h3>AI prompt</h3>
+    <p class="small">Paste this into any AI chat to get a first draft. It's built only from your answers. Dan's article doesn't include a drafting prompt, so this one follows his rules: your own point of view, and borrow the principle, not the idea.</p>
+    <div class="prompt" id="resultPrompt">${esc(resultPrompt(i))}</div></div>
+  ${more.length?`<div class="card"><h3>More angles for later posts</h3><ul class="outline">${more.map(([n,t])=>`<li>${esc(t)}</li>`).join("")}</ul><p class="small">"You can say it eleven ways this month without repeating yourself."</p></div>`:""}
+  <div class="row" style="margin-top:6px">
+    <button class="btn ghost" data-act="editAnswers" data-id="${esc(i.id)}" data-step="0">Edit answers</button>
+    <button class="btn ghost" data-tab="home">Home</button>
+    ${saved?`<button class="btn ghost danger" data-act="delIdea" data-id="${esc(i.id)}">Delete</button>`:""}
+  </div>`;
+}
+
+/* ---------- More (everything rare) ---------- */
+function vMore(){
+  const old=S.ideas.filter(isOld).length, notes=S.sources.length+S.creators.length+S.posts.length+S.guides.length;
+  const item=(tab,title,line,extra="")=>`<button class="menu" data-tab="${tab}"><b>${title}</b><span>${line}</span>${extra}</button>`;
+  return `<div class="row" style="margin-bottom:8px"><button class="btn ghost s" data-tab="home">← Home</button></div>
+  <h1>More</h1>
+  <div class="menus">
+    ${old?item("old",`Older ideas (${old})`,"Ideas from the earlier version. Start a post from any of them."):""}
+    ${notes?item("notes","Notes from the earlier version","Sources, creators, posts and guides you saved before. Read-only."):""}
+    ${item("backup","Back up or move your ideas","Download a backup file, or load one. Loading adds to what you have and never deletes.")}
+    ${item("sync","Sync between devices",connected()?"On. Keeps your phone, Mac and PC in step.":"Off. Optional: keep your phone, Mac and PC in step.")}
+    <button class="menu" data-act="showIntro"><b>Show the intro again</b><span>The short welcome note on the home screen.</span></button>
   </div>
-  ${SOURCE_KINDS.map((k,ki)=>{ const L=limited(byKind(k),"src"+ki); return `<h3 style="margin-top:18px">${SOURCE_GROUPS[ki]} · ${byKind(k).length}</h3>${L.items.map(s=>{ const id=esc(s.id); return `
-    <div class="idea">
-      <p><b>${esc(s.name)}</b></p>${s.conflictOf?`<div class="meta">${cfx("sources",s)}</div>`:""}
-      ${s.url?`<div class="meta">${linkify(s.url)}</div>`:""}${s.note?`<div class="meta">${esc(s.note)}</div>`:""}
-      ${sel===s.id?`<label for="opText">What's your opinion on something you found here?</label><textarea id="opText" placeholder="I think... because..."></textarea>
-        <div class="row" style="margin-top:8px"><button class="btn p s" data-act="saveOpinion" data-id="${id}">Save as Favorite idea & find angles →</button><button class="btn s ghost" data-act="cancelOpinion">Cancel</button></div>`
-      :`<div class="row"><button class="btn s" data-act="opinion" data-id="${id}">I have an opinion on this</button><button class="btn s ghost danger" data-act="delSource" data-id="${id}">Remove</button></div>`}
-    </div>`;}).join("")||'<div class="empty">None yet.</div>'}${L.more}`;}).join("")}
-  ${nextBar("museum","study")}`;
+  <p class="small" style="margin-top:18px">Based on Dan Koe's article "The influencer is dead. The Age of Experience is here." · <a href="${ARTICLE}" target="_blank" rel="noopener">Read it</a></p>`;
 }
-
-/* B1. Study */
-function studyPrompt(){
-  const t = S.settings.topics.trim()||"[topics]";
-  return `I talk about ${t}. Research mid-sized creators who are doing well in those topics, then reverse engineer their strategy from their best posts. Put the posts on a swipe file board, each with a note explaining why that post did well for them. Then, interview me for my own perspective and beliefs so we can start to formulate my own strategy.`;
+const backMore = `<div class="row" style="margin-bottom:8px"><button class="btn ghost s" data-tab="more">← More</button></div>`;
+function vOld(){
+  const list=S.ideas.filter(isOld).sort((a,b)=>b.createdAt-a.createdAt), L=limited(list,"old");
+  return `${backMore}<h1>Older ideas</h1><p class="lead">Ideas you saved in the earlier version of the app. Tap <b>Use</b> to run one through the questions.</p>
+  ${L.items.map(i=>`<div class="idea"><p class="t">${esc(i.text)}</p><div class="meta"><span>${fmt(i.createdAt)}</span><span>${i.board==="validated"?"Went viral":"Idea I love"}</span>${cfx("ideas",i)}</div>
+    ${i.why?`<div class="meta">Why it did well: ${esc(i.why)}</div>`:""}${i.source?`<div class="meta">Source: ${linkify(i.source)}</div>`:""}
+    <div class="row"><button class="btn s" data-act="useOld" data-id="${esc(i.id)}">Use</button><button class="btn s ghost danger" data-act="delIdea" data-id="${esc(i.id)}">Delete</button></div></div>`).join("")||`<div class="empty">No older ideas.</div>`}${L.more}`;
 }
-function vStudy(){
-  const open = U.swipeFor;
-  const L = limited(S.creators,"cr");
-  return `
-  <div class="kicker">Part B · Step 1 · Writing your first post</div>
-  <h1>Study what's already working</h1>
-  <p class="lead">"Pick 3 creators who aren't celebrities, but aren't nobodies." A celebrity gets millions of views on every post, so "that's not a good judge of 'what works.'" Save a link to their profile.</p>
-  <div class="card">
-    <h2>Mid-sized creators · ${S.creators.length}/3</h2>
-    <div class="grid3">
-      <div><label for="crName">Name or @handle</label><input id="crName" placeholder="@creator"></div>
-      <div><label for="crUrl">Profile URL</label><input id="crUrl" placeholder="https://..."></div>
-      <div><label for="crNote">Why mid-sized? (optional)</label><input id="crNote" placeholder="Not a celebrity, not a nobody"></div>
-    </div>
-    <div class="row" style="margin-top:12px"><button class="btn p" data-act="addCreator">Save creator</button></div>
-  </div>
-  ${L.items.map(c=>{
-    const sw = S.ideas.filter(i=>i.creatorId===c.id), id=esc(c.id);
-    return `<div class="card">
-      <div class="row" style="justify-content:space-between"><h2 style="margin:0">${esc(c.name)}</h2><button class="btn s ghost danger" data-act="delCreator" data-id="${id}">Remove</button></div>
-      <div class="meta" style="margin-top:4px">${linkify(c.url)} ${c.note?"· "+esc(c.note):""}${cfx("creators",c)}</div>
-      ${sw.map(i=>`<div class="idea"><p>${esc(i.text)}</p>${i.source?`<div class="meta">${linkify(i.source)}</div>`:""}<div class="meta">Why it did well: ${esc(i.why||"—")}</div><div class="meta">Principle to apply: ${esc(i.principle||"—")}</div></div>`).join("")}
-      ${open===c.id?`<div class="idea hl">
-        <label for="swText">Their best post (paste the text or describe it)</label><textarea id="swText"></textarea>
-        <label for="swUrl">Post link (optional)</label><input id="swUrl">
-        <label for="swWhy">Note: why did this post do well for them?</label><input id="swWhy" placeholder="e.g. Hook calls out the exact person, payoff in the first 3 seconds">
-        <label for="swPrin">The principle I'll take (not the idea)</label><input id="swPrin" placeholder="e.g. Name a specific mistake in the hook">
-        <div class="row" style="margin-top:10px"><button class="btn p s" data-act="saveSwipe" data-id="${id}">Add to swipe file (Validated Ideas)</button><button class="btn s ghost" data-act="cancelSwipe">Cancel</button></div></div>`
-      :`<button class="btn s" data-act="swipe" data-id="${id}">+ Reverse engineer a best post</button>`}
-    </div>`;}).join("")}${L.more}
-  <h3 style="margin-top:20px">Dan's research prompt (paste into any AI tool that can browse)</h3>
-  <div class="prompt"><button class="btn s" data-act="copy" data-prompt="study">Copy</button>${esc(studyPrompt())}</div>
-  <div class="quote" style="margin-top:14px">"You aren't taking the idea. ... you take the principles that make it work and apply it to your own strategy."</div>
-  ${nextBar("density","angle")}`;
+function vNotes(){
+  const sec=(title,arr,f)=>arr.length?`<h2 class="sec">${title} · ${arr.length}</h2>${arr.slice(0,U.limits["n_"+title]||LIM).map(x=>`<div class="idea">${f(x)}${x.conflictOf?`<div class="meta">${cfx(title==="Sources"?"sources":title==="Creators"?"creators":title==="Posts"?"posts":"guides",x)}</div>`:""}</div>`).join("")}${arr.length>(U.limits["n_"+title]||LIM)?`<button class="btn s" data-act="showMore" data-key="n_${title}">Show more</button>`:""}`:"";
+  return `${backMore}<h1>Notes from the earlier version</h1><p class="lead">Kept exactly as you left them, and included in backups and sync.</p>
+  ${sec("Sources",S.sources,s=>`<p class="t"><b>${esc(s.name)}</b></p><div class="meta">${esc(s.kind)}${s.url?" · "+linkify(s.url):""}</div>${s.note?`<div class="meta">${esc(s.note)}</div>`:""}`)}
+  ${sec("Creators",S.creators,c=>`<p class="t"><b>${esc(c.name)}</b></p><div class="meta">${linkify(c.url)}${c.note?" · "+esc(c.note):""}</div>`)}
+  ${sec("Posts",[...S.posts].sort((a,b)=>b.createdAt-a.createdAt),p=>`<div class="meta"><span class="pill ${p.status==="posted"?"ok":""}">${p.status==="posted"?"Posted":"Draft"}</span><span>${esc(p.platform)}</span>${p.replies?`<span>${p.replies} replies</span>`:""}</div><p class="t">${esc(p.text)}</p>${(p.questions||[]).map(q=>`<div class="meta">❓ ${esc(q.text)}</div>`).join("")}`)}
+  ${sec("Guides",S.guides,g=>`<p class="t"><b>${esc(g.title||g.question)}</b></p><div class="meta">❓ ${esc(g.question)}</div>${g.body?`<p class="t small">${esc(g.body.slice(0,400))}${g.body.length>400?"…":""}</p>`:""}`)}`;
 }
-
-/* B2. Angle */
-function anglePrompt(i){
-  const about = [];
-  if(S.settings.topics.trim()) about.push("My topics: "+S.settings.topics.trim());
-  if(S.settings.thinkers.trim()) about.push("Thinkers who shaped me: "+S.settings.thinkers.trim());
-  return `Help me find new angles on a common idea. The angles should come from my thinkers, interests, and life, not generic advice. If you don't know enough about me, ask me first.
-${about.length?"\n"+about.join("\n")+"\n":""}
-The idea: ${i?i.text:"[the common idea]"}
-
-1. Name the universal truth underneath it: the pain or desire my reader already feels.
-
-2. Give me 7 angles, each in 1 or 2 plain sentences, and name the lens for each. At least 2 from thinkers who shaped me, 2 from other fields, 1 from my own life, 1 that redefines the idea, and 1 that disagrees with the common view.
-
-3. Flag the strongest 2 and say why, using relatable, novel, and simple.
-
-Tell me when an angle is weak. Don't write the posts.`;
-}
-function currentAngleIdea(){
-  const c = idea(U.angleIdea); if(c&&c.board==="favorite") return c;
-  let best=null; for(const i of S.ideas) if(i.board==="favorite" && (!best||i.createdAt>best.createdAt)) best=i; return best;
-}
-function vAngle(){
-  const favs = S.ideas.filter(i=>i.board==="favorite").sort((a,b)=>b.createdAt-a.createdAt);
-  const cur = currentAngleIdea();
-  const a = cur ? angleData(cur) : null;
-  const thinker = S.settings.thinkers.split(",")[0].trim();
-  return `
-  <div class="kicker">Part B · Step 2</div>
-  <h1>Find your angle</h1>
-  <p class="lead">"Pick one idea you've saved. One that you love." If you post it the way you found it, it's "probably been said a thousand times. You have to change the perspective." Write 5 angles on the same idea.</p>
-  ${favs.length?`<div class="card"><label for="angleIdea" style="margin-top:0">Pick one idea you love</label>
-    <select id="angleIdea" data-pick="angleIdea">${favs.map(i=>`<option value="${esc(i.id)}" ${cur&&i.id===cur.id?"selected":""}>${esc(i.text.slice(0,90))}${anglesDone(i)?` (${anglesDone(i)}/5)`:""}</option>`).join("")}</select>
-    <p style="margin:12px 0 0;font-size:17px;font-weight:600;white-space:pre-wrap">${esc(cur.text)}</p></div>`
-  :`<div class="empty">Save an idea to your <a href="#" data-tab="museum">Favorite Ideas</a> board first.</div>`}
-  ${cur?`<div class="card">
-    ${ANGLE_QS.map((q,k)=>{
-      const lab = k===0 && thinker ? q.replace("[a thinker I love]", thinker) : q;
-      const r = a.rate[k]||{};
-      return `<div class="q"><div class="n" aria-hidden="true">${k+1}</div><div>
-        <div class="row" style="justify-content:space-between"><label class="lab" for="ang${k}" style="margin:0;color:var(--text);font-size:15px">${esc(lab)}</label><button class="star ${a.stars.includes(k)?"on":""}" data-act="star" data-k="${k}" title="Flag as one of the strongest 2" aria-label="Flag angle ${k+1} as one of the strongest 2" aria-pressed="${a.stars.includes(k)}">★</button></div>
-        <textarea id="ang${k}" data-angle="${k}" placeholder="Write the angle in 1–2 plain sentences">${esc(a.answers[k])}</textarea>
-        <div class="rate">${["relatable","novel","simple"].map(x=>`<label><input type="checkbox" data-rate="${k}" data-x="${x}" ${r[x]?"checked":""}> ${x}</label>`).join("")}</div>
-      </div></div>`;}).join("")}
-    <p class="small">★ Flag your strongest 2, judged on relatable, novel and simple (the test in Dan's prompt). ${a.stars.length}/2 flagged.</p>
-    <div class="row"><button class="btn p" data-act="toDraft" data-id="${esc(cur.id)}" ${a.answers.some(x=>x.trim())?"":"disabled"}>Merge with a validated idea & draft →</button></div>
-  </div>
-  <details><summary>Dan's example: "constraints make you more creative"</summary>
-    <p>When you disagree with it, you have something new: "constraints don't make you creative, they make you decisive, because the blank page is a decision problem disguised as an inspiration problem. Now you're posting something only you would have said, and you can say it eleven ways this month without repeating yourself."</p></details>
-  <h3>Want help finding angles? Dan's prompt, filled in with this idea</h3>
-  <p class="small" style="margin-top:-2px">The "My topics" and "Thinkers who shaped me" lines are added by this app from your Start page (Dan's prompt says "If you don't know enough about me, ask me first"). Everything else is his wording.</p>
-  <div class="prompt"><button class="btn s" data-act="copy" data-prompt="angle">Copy</button>${esc(anglePrompt(cur))}</div>
-  <label for="angExtra">Paste useful angles from your AI tool here (optional)</label>
-  <textarea id="angExtra" data-extra placeholder="Universal truth, extra angles, the strongest 2 and why...">${esc(a.extra)}</textarea>`:""}
-  ${nextBar("study","draft")}`;
-}
-
-/* Merge & post */
-function draftIdea(){ const favs=S.ideas.filter(i=>i.board==="favorite"); const c=idea(U.draftIdea); return (c&&c.board==="favorite")?c:(favs.find(i=>anglesDone(i))||favs[0]); }
-function vDraft(){
-  const favs = S.ideas.filter(i=>i.board==="favorite");
-  const vals = S.ideas.filter(i=>i.board==="validated");
-  const f = draftIdea();
-  const v = idea(U.draftValidated);
-  const a = f ? angleData(f) : null;
-  const order = a ? [...a.stars, ...[0,1,2,3,4].filter(k=>!a.stars.includes(k))].filter(k=>a.answers[k].trim()) : [];
-  const ak = U.draftAngle!=="" && order.includes(+U.draftAngle) ? +U.draftAngle : order[0];
-  const posts = limited([...S.posts].sort((x,y)=>(y.postedAt||y.createdAt)-(x.postedAt||x.createdAt)),"posts");
-  return `
-  <div class="kicker">Pairing two kinds of ideas</div>
-  <h1>Merge & post</h1>
-  <p class="lead">"Your best content will come from pairing two kinds of ideas": the ones you love (your museum, books and life) and the ones "already proven to work (posts that did far better than usual)", told "from your own point of view."</p>
-  <div class="grid2">
-    <div class="card"><h3 style="color:var(--fav)">An idea you love + your angle</h3>
-      ${favs.length?`<select data-pick="draftIdea" aria-label="An idea you love">${favs.map(i=>`<option value="${esc(i.id)}" ${f&&i.id===f.id?"selected":""}>${esc(i.text.slice(0,80))}</option>`).join("")}</select>
-      ${order.length?`<label for="draftAngle">Your angle (strongest first)</label><select id="draftAngle" data-pick="draftAngle">${order.map(k=>`<option value="${k}" ${k===ak?"selected":""}>${a.stars.includes(k)?"★ ":""}${k+1}. ${esc(a.answers[k].slice(0,90))}</option>`).join("")}</select>`
-      :`<p class="small">No angles yet. <a href="#" data-act="toAngle" data-id="${esc(f.id)}">Write 5 angles →</a></p>`}`
-      :`<div class="empty">Add a Favorite idea in the <a href="#" data-tab="museum">museum</a>.</div>`}
-    </div>
-    <div class="card"><h3 style="color:var(--val)">A proven idea</h3>
-      ${vals.length?`<select data-pick="draftValidated" aria-label="A proven idea"><option value="">Choose a Validated idea...</option>${vals.map(i=>`<option value="${esc(i.id)}" ${v&&i.id===v.id?"selected":""}>${esc(i.text.slice(0,80))}</option>`).join("")}</select>
-      ${v?`<div class="meta" style="margin-top:8px">Why it did well: ${esc(v.why||"—")}</div><div class="meta">Principle to apply: ${esc(v.principle||"—")}</div>`:""}`
-      :`<div class="empty">Add viral posts to <a href="#" data-tab="museum">Validated Ideas</a> or your <a href="#" data-tab="study">swipe file</a>.</div>`}
-    </div>
-  </div>
-  ${f?`<div class="card">
-    <h2>Write the post in your words</h2>
-    ${order.length?`<div class="quote" style="margin-bottom:10px">${esc(a.answers[ak])}</div>`:""}
-    <div class="grid2"><div><label for="drPlat">Where will you post it?</label><select id="drPlat">${PLATFORMS.map(p=>`<option>${p}</option>`).join("")}</select></div><div></div></div>
-    <label for="drText">Post / script</label>
-    <textarea id="drText" style="min-height:160px" placeholder="Open with your angle, borrow the principle from the proven post, and say it the way only you would."></textarea>
-    <div class="row" style="margin-top:10px"><button class="btn p" data-act="saveDraft">Save draft</button></div>
-  </div>`:""}
-  <h2 style="margin-top:22px">Drafts & posts · ${S.posts.length}</h2>
-  ${posts.items.map(p=>{const fi=idea(p.ideaId), id=esc(p.id);return `<div class="idea">
-    <div class="meta"><span class="pill ${p.status==="posted"?"ok":""}">${p.status==="posted"?"Posted "+fmt(p.postedAt):"Draft"}</span><span>${esc(p.platform)}</span>${fi?`<span>from: ${esc(fi.text.slice(0,50))}</span>`:""}${cfx("posts",p)}</div>
-    <textarea data-post="${id}" data-field="text" aria-label="Post text">${esc(p.text)}</textarea>
-    ${p.status==="posted"?`<label for="link_${id}">Link to the live post (optional)</label><input id="link_${id}" data-post="${id}" data-field="link" value="${esc(p.link||"")}">`:""}
-    <div class="row" style="margin-top:8px">${p.status!=="posted"?`<button class="btn s p" data-act="markPosted" data-id="${id}">Mark as posted</button>`:`<button class="btn s" data-tab="listen">Track replies →</button><button class="btn s ghost" data-act="unpost" data-id="${id}">Back to draft</button>`}<button class="btn s ghost danger" data-act="delPost" data-id="${id}">Delete</button></div>
-  </div>`;}).join("")||'<div class="empty">No drafts yet.</div>'}${posts.more}
-  ${nextBar("angle","listen")}`;
-}
-
-/* W3 listen */
-function vListen(){
-  const all = S.posts.filter(p=>p.status==="posted").sort((a,b)=>((+b.replies||0)+(b.questions||[]).length)-((+a.replies||0)+(a.questions||[]).length));
-  const top = all[0]; const L=limited(all,"listen");
-  return `
-  <div class="kicker">Week 3</div>
-  <h1>Keep posting. Watch the replies and questions.</h1>
-  <p class="lead">"Keep posting and pay attention to which posts get the most replies and questions." The posts that get the most rise to the top, and the questions people ask feed Week 4.</p>
-  ${L.items.map(p=>{ const id=esc(p.id); return `<div class="idea ${p===top&&((+p.replies||0)+(p.questions||[]).length)>0?"hl":""}">
-    <div class="meta"><span class="pill ok">${esc(p.platform)}</span><span>Posted ${fmt(p.postedAt)}</span>${p.link?linkify(p.link):""}</div>
-    <p>${esc(p.text.slice(0,220))}${p.text.length>220?"…":""}</p>
-    <div class="grid2"><div><label for="rep_${id}">Replies</label><input id="rep_${id}" type="number" min="0" inputmode="numeric" data-post="${id}" data-field="replies" value="${esc(p.replies||0)}"></div><div></div></div>
-    <label>Questions people asked</label>
-    ${(p.questions||[]).map(q=>`<div class="row" style="margin:4px 0"><span style="flex:1">❓ ${esc(q.text)}</span><button class="btn s" data-act="useQ" data-id="${id}" data-q="${esc(q.id)}">Make a guide →</button><button class="btn s ghost danger" data-act="delQ" data-id="${id}" data-q="${esc(q.id)}" aria-label="Delete question">×</button></div>`).join("")}
-    <div class="row" style="margin-top:6px"><input id="q_${id}" placeholder="Paste a question from the comments" aria-label="Paste a question from the comments" style="flex:1"><button class="btn s" data-act="addQ" data-id="${id}">Add</button></div>
-  </div>`;}).join("")||`<div class="empty">Mark a draft as posted on <a href="#" data-tab="draft">Merge & post</a> first.</div>`}${L.more}
-  ${nextBar("draft","guide")}`;
-}
-
-/* W4 guide */
-function vGuide(){
-  const qs = []; S.posts.forEach(p=>(p.questions||[]).forEach(q=>qs.push({p,q})));
-  const guides=[...S.guides].sort((a,b)=>b.createdAt-a.createdAt);
-  const gc=(g,f,t)=>`<label class="check"><input type="checkbox" data-gcheck="${esc(g.id)}" data-field="${f}" ${g[f]?"checked":""}><div>${t}</div></label>`;
-  return `
-  <div class="kicker">Week 4</div>
-  <h1>Pick one question. Make a one-page guide.</h1>
-  <p class="lead">"Pick one question, make a one-page guide that answers it, and put it out as a free guide to collect emails, then build a larger version with the product prompt."</p>
-  <div class="quote">"The products that do the best are based on what people are already signalling that they want + a problem you've solved in your own life."</div>
-  <div class="card">
-    <label for="gQ" style="margin-top:0">Pick one question</label>
-    <select id="gQ" data-pick="guideQ"><option value="">Choose from the questions you saved...</option>${qs.map(({p,q})=>`<option value="${esc(p.id+"|"+q.id)}" ${U.guideQ===p.id+"|"+q.id?"selected":""}>${esc(q.text)}</option>`).join("")}</select>
-    <label for="gQText">...or type it</label><input id="gQText" placeholder="The question you'll answer">
-    <div class="row" style="margin-top:10px"><button class="btn p" data-act="newGuide">Start the one-page guide</button></div>
-  </div>
-  ${guides.map(g=>{ const id=esc(g.id); return `<div class="card">
-    <div class="row" style="justify-content:space-between"><h2 style="margin:0">❓ ${esc(g.question)}</h2><button class="btn s ghost danger" data-act="delGuide" data-id="${id}">Delete</button></div>
-    ${g.conflictOf?`<div class="meta">${cfx("guides",g)}</div>`:""}
-    <label for="gt_${id}">Guide title</label><input id="gt_${id}" data-guide="${id}" data-field="title" value="${esc(g.title)}">
-    <label for="gb_${id}">The one page that answers it</label><textarea id="gb_${id}" data-guide="${id}" data-field="body" style="min-height:180px">${esc(g.body)}</textarea>
-    <label for="ge_${id}">Where people get it in exchange for their email (link)</label><input id="ge_${id}" data-guide="${id}" data-field="emailLink" value="${esc(g.emailLink)}">
-    <div style="margin-top:10px">
-      ${gc(g,"made","Made the one-page guide")}
-      ${gc(g,"out","Put it out as a free guide to collect emails")}
-      ${gc(g,"larger","Built a larger version with the product prompt")}
-      <p class="small">Dan links the product prompt from <a href="${ARTICLE}" target="_blank" rel="noopener">the article</a>. It isn't printed there, so it isn't copied here.</p>
-    </div></div>`;}).join("")}
-  <div class="card"><b>Then keep doing it for the next 12 months.</b> <span class="small">"The artisan builds a body of work, one idea and one project at a time, and lets social media pay for it."</span></div>
-  ${nextBar("listen",null)}`;
+function vBackup(){
+  return `${backMore}<h1>Back up or move your ideas</h1>
+  <div class="card"><h2>Download a backup</h2><p class="small">Saves everything (ideas, answers and older notes) as one file. Keep it somewhere safe, or use it to move your ideas to another browser.</p><button class="btn p" data-act="export">Download backup</button></div>
+  <div class="card"><h2>Load a backup</h2><p class="small">Adds the file's ideas to what's already here. Nothing gets deleted. If an idea was changed in both places, you keep both.</p><button class="btn" data-act="import">Choose backup file</button></div>`;
 }
 
 /* ---------- sync with a private GitHub repository ----------
@@ -858,7 +731,7 @@ function updatePill(){
   const label = {off:"Sync: off", idle:"Sync", syncing:"Syncing…", ok:"Synced", offline:"Offline", error:"Sync error"}[st] || "Sync";
   const dot = {ok:"var(--good)", syncing:"var(--accent2)", offline:"var(--muted)", error:"var(--bad)"}[st] || "var(--muted)";
   b.innerHTML = `<span class="dot" style="background:${dot}" aria-hidden="true"></span>${label}`;
-  b.dataset.syncState = st; b.dataset.syncGen = syncState.gen;
+  b.dataset.syncState = st; b.dataset.syncGen = syncState.gen; b.hidden = !connected();
   b.title = connected() ? (st==="ok"&&SY.lastSync ? "Last synced "+hm(SY.lastSync) : syncState.msg || label) : "Set up sync between your devices";
   b.setAttribute("aria-label", "Sync status: "+label+(SY.lastSync&&connected()?", last synced "+hm(SY.lastSync):""));
 }
@@ -962,8 +835,8 @@ function vSync(){
   const on = connected(), st = syncState.state;
   const stateText = !on ? "Not connected" : ({idle:"Waiting to sync", syncing:"Syncing…", ok:"Synced", offline:"Offline", error:"Needs attention"}[st]||"Waiting to sync");
   return `
-  <div class="kicker">Sync</div>
-  <h1>Sync your ideas across devices</h1>
+  <div class="row" style="margin-bottom:8px"><button class="btn ghost s" data-tab="more">← More</button></div>
+  <h1>Sync between devices</h1>
   <p class="lead">Your ideas are always saved on this device first, so the app works without internet. Sync copies them to a private GitHub repository that you own, so your phone, Mac and PC stay in step. If two devices change the same idea, you keep both versions.</p>
   <div class="card" id="syncStatus" role="status">
     <h2 style="margin:0 0 6px">${esc(stateText)}</h2>
@@ -991,7 +864,7 @@ function vSync(){
   </details>`:`
   <div class="card">
     <h2>Connect (once per device)</h2>
-    <p class="small" style="margin-top:-4px">Already connected on another device? Open Sync there, tap <b>Connect another device</b>, and scan the code with this device instead.</p>
+    <p class="small" style="margin-top:-4px">Already connected on another device? On that device open <b>More → Sync between devices</b>, tap <b>Connect another device</b>, and scan the code with this device instead.</p>
     <div class="grid2">
       <div><label for="syOwner">Your GitHub username</label><input id="syOwner" autocomplete="off" spellcheck="false" autocapitalize="none" value="${esc(SY.owner||DEFAULT_OWNER)}" placeholder="pexreyes"></div>
       <div><label for="syRepo">Data repository name</label><input id="syRepo" autocomplete="off" spellcheck="false" autocapitalize="none" value="${esc(SY.repo||DEFAULT_REPO)}" placeholder="idea-catcher-data"></div>
@@ -1000,7 +873,7 @@ function vSync(){
     ${syncState.connectMsg?`<p class="warn" role="alert">${esc(syncState.connectMsg)}</p>`:""}
     <div class="row" style="margin-top:12px"><button class="btn p" data-act="connect" ${syncState.connectBusy?"disabled":""}>Connect</button><span class="small">The token stays on this device only. It's never put in exports or in the repo.</span></div>
   </div>`}
-  <div class="next"><button class="btn ghost" data-tab="start">← Back to Start</button></div>`;
+  `;
 }
 // triggers
 addEventListener("online", ()=>runSync("online"));
@@ -1012,7 +885,7 @@ addEventListener("storage", e=>{ if(e.key===SYNCKEY){ SY=readSync(); if(!connect
 addEventListener("hashchange", ()=>{ const c=takeConnectFragment(); if(c){ U.tab="sync"; saveUi(); render(); connectSync(c); } else if(notice) render(); });
 
 /* ---------- events ---------- */
-const isFormId = id => FORM.has(id) || /^(q_|edit_)/.test(id);
+const isFormId = id => FORM.has(id);
 function clearForm(...ids){ ids.forEach(k=>delete U.form[k]); }
 function removeWithUndo(col, id, label, after, undoAfter){
   const arr=S[col], idx=arr.findIndex(x=>x.id===id); if(idx<0) return;
@@ -1027,6 +900,27 @@ function removeWithUndo(col, id, label, after, undoAfter){
     save(); render(); toast(label+" restored");
   });
 }
+const hasContent = i => !!(i.text.trim() || answered(i).length || (i.proven||"").trim() || (i.provenWhy||"").trim());
+// Move the current in-progress idea out of the way before starting a fresh one (never throws away typed text)
+function parkWip(){
+  const w=wizItem(); if(!w || !w.wip) return;
+  if(hasContent(w)){ delete w.wip; w.savedAt=w.savedAt||Date.now(); }
+  else { const k=S.ideas.indexOf(w); if(k>=0) S.ideas.splice(k,1); }   // empty draft: nothing to keep
+}
+function newWizard(text){
+  parkWip();
+  const it={id:uid(), text:text||"", type:"Random thought", board:"favorite", wip:true, createdAt:Date.now()};
+  S.ideas.push(it); U.wizId=it.id; U.step=text?1:0; save(); go("q"); focusQ();
+}
+function openWizard(id, step){ U.wizId=id; U.step=step|0; go("q"); focusQ(); }
+function focusQ(){ setTimeout(()=>{ const n=document.querySelector(".qin"); if(n && matchMedia("(pointer:fine)").matches) n.focus(); else { const h=document.querySelector(".prog"); if(h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); } } },0); }
+function updateNext(){
+  const b=$("#wNext"), i=wizItem(); if(!b||!i||b.dataset.optional!=="1") return;
+  const st=U.step, a=angleData(i);
+  const filled = st===1 ? !!((i.proven||"").trim()||(i.provenWhy||"").trim()) : !!(a.answers[st-2]||"").trim();
+  b.textContent = filled ? "Next" : "Skip";
+}
+function finishSave(i){ if(i.wip) delete i.wip; i.savedAt=i.savedAt||Date.now(); }
 document.addEventListener("click", e=>{
   const t = e.target.closest("[data-tab],[data-act]");
   if(!t) return;
@@ -1036,84 +930,50 @@ document.addEventListener("click", e=>{
   if(t.dataset.tab){ e.preventDefault(); go(t.dataset.tab); return; }
   const act = t.dataset.act, id = t.dataset.id;
   const A = {
-    capture(){
-      const text = $("#capText").value.trim(); if(!text){ $("#capText").focus(); return toast("Write the idea first"); }
-      const chk=document.querySelector('input[name="capBoard"]:checked'); const board = chk?chk.value:"favorite";
-      S.ideas.push({id:uid(),text,type:$("#capType").value,board,source:$("#capSource").value.trim(),why:board==="validated"?$("#capWhy").value.trim():"",createdAt:Date.now()});
-      clearForm("capText","capSource","capWhy");
-      save(); render(); toast("Saved to "+(board==="favorite"?"Favorite":"Validated")+" Ideas"); $("#capText").focus();
+    introOk(){ U.introSeen=true; saveUi(); render(); },
+    showIntro(){ U.introSeen=false; go("home"); },
+    start(){ newWizard(""); },
+    startNew(){ newWizard(""); toast("Your earlier idea is in Saved"); },
+    resume(){ openWizard(U.wizId, U.step); },
+    continueIdea(){ const i=idea(id); if(!i) return; openWizard(id, i.text.trim()?1:0); },
+    useOld(){ const i=idea(id); if(!i) return; parkWip(); openWizard(id, 1); },
+    pickOld(){ const o=idea(id), w=wizItem(); if(!o) return;
+      if(w && w.wip && !hasContent(w)){ const k=S.ideas.indexOf(w); if(k>=0) S.ideas.splice(k,1); }
+      else parkWip();
+      openWizard(id, 1); },
+    wNext(){
+      flush(); const i=wizItem(); if(!i) return go("home");
+      if(U.step===0 && !i.text.trim()){ const n=$("#wText"); if(n) n.focus(); return toast("Write your idea first"); }
+      if(U.step===QN-1){
+        if(!answered(i).length) return toast("Answer at least one angle question first");
+        if(!angleData(i).stars.length) return toast("Tap the angle you like best");
+        U.resultId=i.id; saveUi(); return go("result");
+      }
+      U.step++; saveUi(); render(); window.scrollTo(0,0); focusQ();
     },
-    flip(){ const i=idea(id); if(!i) return; i.board=i.board==="favorite"?"validated":"favorite"; save(); render(); },
-    editIdea(){ U.editIdea=id; render(); const n=document.getElementById("edit_"+id); if(n) n.focus(); },
-    cancelEdit(){ clearForm("edit_"+U.editIdea); U.editIdea=""; saveUi(); render(); },
-    saveEdit(){ const i=idea(id), n=document.getElementById("edit_"+id); if(!i||!n) return; const v=n.value.trim(); if(!v) return toast("An idea can't be empty. Use Delete instead.");
-      i.text=v; clearForm("edit_"+id); U.editIdea=""; save(); render(); toast("Idea updated"); },
-    delIdea(){ removeWithUndo("ideas", id, "Idea"); },
-    toAngle(){ U.angleIdea=id; go("angle"); },
-    pairThis(){ U.draftValidated=id; go("draft"); },
-    addSource(){
-      const name=$("#srcName").value.trim(); if(!name) return toast("Name the source");
-      S.sources.push({id:uid(),name,kind:$("#srcKind").value,url:$("#srcUrl").value.trim(),note:$("#srcNote").value.trim(),createdAt:Date.now()});
-      clearForm("srcName","srcUrl","srcNote"); save(); render(); toast("Source added");
-    },
-    delSource(){ removeWithUndo("sources", id, "Source"); },
-    opinion(){ U.srcCapture=id; render(); setTimeout(()=>$("#opText")&&$("#opText").focus(),0); },
-    cancelOpinion(){ U.srcCapture=""; clearForm("opText"); saveUi(); render(); },
-    saveOpinion(){
-      const text=$("#opText").value.trim(); if(!text) return toast("Write your opinion first");
-      const s=S.sources.find(x=>x.id===id); const nid=uid();
-      S.ideas.push({id:nid,text,type:"Anything else",board:"favorite",source:s?(s.url||s.name):"",createdAt:Date.now()});
-      U.srcCapture=""; U.angleIdea=nid; clearForm("opText"); save(); go("angle"); toast("Saved. Now find your angle");
-    },
-    addCreator(){
-      const name=$("#crName").value.trim(); if(!name) return toast("Add the creator's name");
-      S.creators.push({id:uid(),name,url:$("#crUrl").value.trim(),note:$("#crNote").value.trim(),createdAt:Date.now()});
-      clearForm("crName","crUrl","crNote"); save(); render(); toast("Creator saved");
-    },
-    delCreator(){ removeWithUndo("creators", id, "Creator",
-      c=>{ const linked=S.ideas.filter(i=>i.creatorId===c.id).map(i=>i.id); S.ideas.forEach(i=>{ if(i.creatorId===c.id) i.creatorId=""; }); return linked; },
-      (c,linked)=>{ (linked||[]).forEach(iid=>{ const i=idea(iid); if(i&&!i.creatorId) i.creatorId=c.id; }); }); },
-    swipe(){ U.swipeFor=id; render(); },
-    cancelSwipe(){ U.swipeFor=""; clearForm("swText","swUrl","swWhy","swPrin"); saveUi(); render(); },
-    saveSwipe(){
-      const text=$("#swText").value.trim(); if(!text) return toast("Paste or describe the post");
-      S.ideas.push({id:uid(),text,type:"Social post that inspired me",board:"validated",source:$("#swUrl").value.trim(),why:$("#swWhy").value.trim(),principle:$("#swPrin").value.trim(),creatorId:id,createdAt:Date.now()});
-      U.swipeFor=""; clearForm("swText","swUrl","swWhy","swPrin"); save(); render(); toast("Added to swipe file");
-    },
-    copy(){ copy(t.dataset.prompt==="study"?studyPrompt():anglePrompt(currentAngleIdea())); },
+    wBack(){ if(U.step>0){ U.step--; saveUi(); render(); window.scrollTo(0,0); focusQ(); } else go("home"); },
+    wGoto(){ U.step=+t.dataset.step; saveUi(); render(); focusQ(); },
+    wClose(){ const i=wizItem(); go("home"); if(i && hasContent(i)) toast(i.wip?"Progress kept. Tap Continue any time.":"Changes saved"); },
+    saveIdeaOnly(){ const i=wizItem(); if(!i) return; if(!i.text.trim()){ const n=$("#wText"); if(n) n.focus(); return toast("Write your idea first"); }
+      finishSave(i); U.wizId=""; U.step=0; save(); go("home"); toast("Idea saved. Tap Continue when you're ready."); },
     star(){
-      const cur = currentAngleIdea(); if(!cur) return; const a=angleData(cur); const k=+t.dataset.k;
+      const cur=wizItem(); if(!cur) return; const a=angleData(cur); const k=+t.dataset.k;
       if(a.stars.includes(k)) a.stars=a.stars.filter(x=>x!==k); else { a.stars.push(k); if(a.stars.length>2) a.stars.shift(); }
       save(); renderKeep();
     },
-    toDraft(){ U.draftIdea=id; U.draftAngle=""; go("draft"); },
-    saveDraft(){
-      const text=$("#drText").value.trim(); if(!text) return toast("Write the post first");
-      const f=draftIdea();
-      const angSel=document.querySelector('[data-pick="draftAngle"]');
-      S.posts.push({id:uid(),ideaId:f?f.id:"",validatedId:U.draftValidated||"",angleIdx:angSel?+angSel.value:null,platform:$("#drPlat").value,text,status:"draft",createdAt:Date.now(),replies:0,questions:[]});
-      clearForm("drText"); save(); render(); toast("Draft saved");
-    },
-    markPosted(){ const p=S.posts.find(x=>x.id===id); if(!p) return; p.status="posted"; p.postedAt=Date.now(); save(); render(); toast("Marked as posted"); },
-    unpost(){ const p=S.posts.find(x=>x.id===id); if(!p) return; p.status="draft"; delete p.postedAt; save(); render(); toast("Moved back to drafts"); },
-    delPost(){ removeWithUndo("posts", id, "Post"); },
-    addQ(){ const inp=$("#q_"+CSS.escape(id)); const v=inp?inp.value.trim():""; if(!v){ if(inp) inp.focus(); return toast("Paste the question first"); }
-      const p=S.posts.find(x=>x.id===id); if(!p) return; (p.questions=p.questions||[]).push({id:uid(),text:v}); clearForm("q_"+id); save(); render(); },
-    delQ(){ const p=S.posts.find(x=>x.id===id); if(!p) return; const qi=p.questions.findIndex(q=>q.id===t.dataset.q); if(qi<0) return; const q=p.questions[qi];
-      p.questions.splice(qi,1); save(); render();
-      toast("Question deleted", ()=>{ const pp=S.posts.find(x=>x.id===id); if(pp && !pp.questions.some(x=>x.id===q.id)){ pp.questions.splice(Math.min(qi,pp.questions.length),0,q); save(); render(); toast("Question restored"); } }); },
-    useQ(){ U.guideQ=id+"|"+t.dataset.q; go("guide"); },
-    newGuide(){
-      let q=$("#gQText").value.trim(), postId="";
-      const sel=$("#gQ").value;
-      if(!q && sel){ const [pid,qid]=sel.split("|"); const p=S.posts.find(x=>x.id===pid); const qq=p&&p.questions.find(x=>x.id===qid); if(qq){q=qq.text; postId=pid;} }
-      if(!q) return toast("Pick or type one question");
-      S.guides.push({id:uid(),question:q,postId,title:"",body:"",emailLink:"",made:false,out:false,larger:false,createdAt:Date.now()});
-      U.guideQ=""; clearForm("gQText"); save(); render(); toast("Guide started");
-    },
-    delGuide(){ removeWithUndo("guides", id, "Guide"); },
+    openResult(){ U.resultId=id; go("result"); },
+    copyResult(){ const i=idea(id); if(i) copy(resultPrompt(i), "AI prompt"); },
+    copyOutline(){ const i=idea(id); if(i) copy(outlineText(i), "Outline"); },
+    saveResult(){ const i=idea(id); if(!i) return; finishSave(i); if(U.wizId===id){ U.wizId=""; U.step=0; } save(); render(); toast("Saved to your list"); },
+    startAnother(){ const i=idea(U.resultId); let msg="";
+      if(i && (i.wip || !i.savedAt)){ finishSave(i); msg="Your last result was saved. "; }
+      if(i && U.wizId===i.id) U.wizId="";
+      newWizard(""); if(msg) toast(msg+"New idea started."); },
+    editAnswers(){ const i=idea(id); if(!i) return; if(U.wizId!==id) parkWip(); openWizard(id, +t.dataset.step||0); },
+    delIdea(){ const wasResult=U.tab==="result"; if(U.wizId===id){ U.wizId=""; U.step=0; } if(wasResult) U.tab="home"; removeWithUndo("ideas", id, "Idea"); },
     undo(){ const f=toast._undo; toast._undo=null; $("#toast").classList.remove("on","undo"); if(f) f(); },
     more(){ const k=t.dataset.key; U.limits[k]=(U.limits[k]||LIM)+LIM; saveUi(); renderKeep(); },
+    showMore(){ const k=t.dataset.key; U.limits[k]=(U.limits[k]||LIM)+LIM; saveUi(); renderKeep(); },
     resolve(){ const it=(S[t.dataset.kind]||[]).find(x=>x.id===id); if(it){ delete it.conflictOf; delete it.conflictAt; save(); render(); } },
     useConflict(){ const c=S.conflicts.find(x=>x.id===id); if(!c) return; Object.assign(S[c.what], c.value); S.conflicts=S.conflicts.filter(x=>x.id!==id); save(); render(); toast("Switched to that version"); },
     dropConflict(){ S.conflicts=S.conflicts.filter(x=>x.id!==id); save(); render(); },
@@ -1133,7 +993,7 @@ document.addEventListener("click", e=>{
       const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
       a.download="idea-catcher-"+new Date().toISOString().slice(0,10)+".json"; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-      toast("Exported");
+      toast("Backup downloaded");
     }
   };
   if(A[act]) A[act]();
@@ -1141,22 +1001,14 @@ document.addEventListener("click", e=>{
 document.addEventListener("input", e=>{
   const t=e.target; if(!t.isConnected) return;
   if(t.id && isFormId(t.id)){ U.form[t.id]=t.value; saveUiSoon(); return; }
-  if(t.dataset.set!==undefined){ S.settings[t.dataset.set]=t.value; saveSoon(); return; }
-  if(t.dataset.angle!==undefined){ const c=currentAngleIdea(); if(!c) return; angleData(c).answers[+t.dataset.angle]=t.value; saveSoon(); const b=document.querySelector('[data-act="toDraft"]'); if(b) b.disabled=!angleData(c).answers.some(x=>x.trim()); return; }
-  if(t.dataset.extra!==undefined){ const c=currentAngleIdea(); if(c){ angleData(c).extra=t.value; saveSoon(); } return; }
-  if(t.dataset.post){ const p=S.posts.find(x=>x.id===t.dataset.post); if(!p) return; p[t.dataset.field]=t.dataset.field==="replies"?Math.max(0,Math.floor(+t.value||0)):t.value; saveSoon(); return; }
-  if(t.dataset.guide){ const g=S.guides.find(x=>x.id===t.dataset.guide); if(!g) return; g[t.dataset.field]=t.value; saveSoon(); return; }
+  if(t.dataset.set!==undefined){ S.settings[t.dataset.set]=t.value; saveSoon(); const l=document.querySelector('label[for="ang0"]'); if(l) l.textContent=angleLabel(0); return; }
+  if(t.dataset.wf!==undefined){ const c=wizItem(); if(!c) return; c[t.dataset.wf]=t.value; saveSoon(); updateNext(); return; }
+  if(t.dataset.angle!==undefined){ const c=wizItem(); if(!c) return; const a=angleData(c), k=+t.dataset.angle; a.answers[k]=t.value; if(!t.value.trim()) a.stars=a.stars.filter(x=>x!==k); saveSoon(); updateNext(); return; }
   if(t.dataset.filter!==undefined){ U.filter=t.value; saveUiSoon(); renderKeep(); }
 });
 document.addEventListener("change", e=>{
   const t=e.target;
-  if(t.name==="capBoard"){ U.form.capBoard=t.value; saveUiSoon(); $("#whyWrap").style.display=t.value==="validated"?"block":"none"; return; }
   if(!t.isConnected) return;   // a field removed by a re-render can still fire "change" with its old text
-  if(t.id && isFormId(t.id)){ if(t.tagName==="SELECT"){ U.form[t.id]=t.value; saveUiSoon(); } return; }
-  if(t.dataset.pick){ U[t.dataset.pick]=t.value; if(t.dataset.pick==="draftIdea") U.draftAngle=""; saveUi(); renderKeep(); return; }
-  if(t.dataset.rate!==undefined){ const c=currentAngleIdea(); if(!c) return; const a=angleData(c); const k=t.dataset.rate; a.rate[k]=a.rate[k]||{}; a.rate[k][t.dataset.x]=t.checked; save(); return; }
-  if(t.dataset.plan){ S.plan[t.dataset.plan]=t.checked; save(); renderKeep(); return; }
-  if(t.dataset.gcheck){ const g=S.guides.find(x=>x.id===t.dataset.gcheck); if(!g) return; g[t.dataset.field]=t.checked; save(); return; }
   if(t.id==="importFile" && t.files && t.files[0]){
     const file=t.files[0]; const r=new FileReader();
     r.onerror=()=>{ toast("Couldn't read that file. Nothing changed."); t.value=""; };
@@ -1166,17 +1018,22 @@ document.addEventListener("change", e=>{
       if(!n){ toast("That file isn't an Idea Catcher backup. Nothing changed."); return; }
       flush();
       try{ localStorage.setItem(KEY+".before-import", JSON.stringify(S)); }catch(_){}
-      const before={ideas:S.ideas.length, posts:S.posts.length};
+      const before={ideas:S.ideas.length};
       S=merge2(S,n.data); save(); render();
       const added=S.ideas.length-before.ideas;
-      toast(`Imported and merged with what you had${added>0?` (${added} new idea${added===1?"":"s"})`:""}.`);
+      toast(`Backup loaded and merged with what you had${added>0?` (${added} new idea${added===1?"":"s"})`:""}.`);
     };
     r.readAsText(file);
   }
 });
 document.addEventListener("keydown", e=>{
-  if((e.ctrlKey||e.metaKey) && e.key==="Enter" && e.target.id==="capText"){ e.preventDefault(); const b=document.querySelector('[data-act="capture"]'); if(b) b.click(); }
+  if((e.ctrlKey||e.metaKey) && e.key==="Enter" && e.target.closest && e.target.closest(".qcard")){ e.preventDefault(); const b=$("#wNext"); if(b) b.click(); }
 });
+// Text half-typed in the old version's capture box becomes an in-progress idea, so it isn't lost.
+(function(){ const t=(U.form&&U.form.capText)||""; if(!t.trim()) return;
+  const it={id:uid(), text:t, type:"Random thought", board:"favorite", createdAt:Date.now()};
+  if(!wizItem()){ it.wip=true; U.wizId=it.id; U.step=0; } else it.savedAt=Date.now();
+  S.ideas.push(it); save(); delete U.form.capText; saveUi(); })();
 const fromLink = takeConnectFragment();
 if(fromLink){ U.tab="sync"; saveUi(); }
 render();

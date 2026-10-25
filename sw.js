@@ -1,7 +1,7 @@
 // Idea Catcher service worker: keeps the app shell on the device so it opens and captures offline.
 // Your ideas themselves live in the browser's localStorage, not in this cache.
 // Bump VERSION whenever index.html changes so phones pick up the new version.
-const VERSION = "ic-shell-v3";
+const VERSION = "ic-shell-v4";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png", "./icons/favicon-32.png"];
 
 self.addEventListener("install", e => {
